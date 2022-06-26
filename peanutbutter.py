@@ -4,9 +4,23 @@ import configparser
 import tkinter as tk
 from turtle import bgcolor
 
+currentPathString = os.getcwd()
+
 def changeDirectory():
+    global currentPathString
     pathString = pathEntry.get()
-    print(pathString)
+    try:
+        os.chdir(pathString)
+        currentPathString = pathString
+        print(f"Changing directory to: {pathString}")
+    except:
+        print(f"Changing directory to: {pathString} failed.")
+
+        # Rewrite the path
+        pathEntry.delete(0, tk.END)
+        pathEntry.insert(0, currentPathString)
+
+
 
 if __name__ == "__main__":
 
