@@ -24,6 +24,12 @@ if __name__ == "__main__":
     filemenu = tk.Menu(menubar, tearoff=0)
     filemenu.add_command(label="New")
     filemenu.add_command(label="Open")
+    filemenu.add_command(label="Properties")
+    filemenu.add_separator()
+    filemenu.add_command(label="Recent Files")
+    filemenu.add_separator()
+    filemenu.add_command(label="Quit", command=mainWin.quit)
+
     menubar.add_cascade(label="File", menu=filemenu)
 
     mainWin.config(menu=menubar)
