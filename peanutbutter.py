@@ -18,24 +18,27 @@ if __name__ == "__main__":
     # Menu Bar
     menubar = tk.Menu(mainWin)
     # File Menu
-    filemenu = tk.Menu(menubar, tearoff=0)
-    filemenu.add_command(label="New")
-    filemenu.add_command(label="Open")
-    filemenu.add_command(label="Properties")
-    filemenu.add_separator()
-    filemenu.add_command(label="Recent Files")
-    filemenu.add_separator()
-    filemenu.add_command(label="Quit", command=mainWin.quit)
-    menubar.add_cascade(label="File", menu=filemenu)
+    fileMenu = tk.Menu(menubar, tearoff=0)
+    fileMenu.add_command(label="New")
+    fileMenu.add_command(label="Open")
+    fileMenu.add_command(label="Properties")
+    fileMenu.add_separator()
+    fileMenu.add_command(label="Recent Files")
+    fileMenu.add_separator()
+    fileMenu.add_command(label="Quit", command=mainWin.quit)
+    menubar.add_cascade(label="File", menu=fileMenu)
     # Hash Menu
-    hashmenu = tk.Menu(menubar, tearoff=0)
-    hashmenu.add_command(label="MD5")
-    hashmenu.add_command(label="SHA-256")
-    menubar.add_cascade(label="Hash", menu=hashmenu)
-
+    hashMenu = tk.Menu(menubar, tearoff=0)
+    hashMenu.add_command(label="MD5")
+    hashMenu.add_command(label="SHA-256")
+    menubar.add_cascade(label="Hash", menu=hashMenu)
     mainWin.config(menu=menubar)
 
 
+
+
+    # Labels
+    locationLabel = tk.Label(mainWin, text="Path: ")
     
 
     mainWin.mainloop()
