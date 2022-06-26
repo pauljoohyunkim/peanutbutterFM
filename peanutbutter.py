@@ -55,7 +55,7 @@ if __name__ == "__main__":
     mainWin.config(menu=menubar)
 
 
-    # Navigator Frame
+    # Navigator Frame: Folder navigation
     navigatorFrame = tk.Frame(master=mainWin)
     locationLabel = tk.Label(master=navigatorFrame, text="Path: ", fg=fgColor, bg=bgColor)
     pathEntry = tk.Entry(master=navigatorFrame, width=100, fg=fgColor, bg = bgColor)
@@ -66,8 +66,11 @@ if __name__ == "__main__":
     pathEntry.insert(0, os.getcwd())
     goButton.grid(row=0,column=2)
     navigatorFrame.grid(row=0,column=0)
-    # Labels
     
+    # Content Frame: Shows the files.
+    contentFrame = tk.Frame(master=mainWin)
+
+    contentFrame.grid(row=1,column=1)
 
 
 
