@@ -6,9 +6,15 @@ import tkinter as tk
 
 if __name__ == "__main__":
     
+    # Configuration
+    config = configparser.ConfigParser()
+    config.read("pb.conf")
+    windowSize = config['DEFAULT']['WindowSize']
+
     # Main Window
     mainWin = tk.Tk()
     mainWin.title("Peanut Butter")
+    mainWin.geometry(windowSize)
 
 
     # Menu Bar
