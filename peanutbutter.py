@@ -2,7 +2,11 @@
 import os
 import configparser
 import tkinter as tk
-from turtle import bgcolor
+from datetime import datetime
+
+def currentTime():
+    now = datetime.now()
+    return now.strftime("%Y.%m.%d %H:%M:%S")    
 
 currentPathString = os.getcwd()
 
@@ -12,9 +16,9 @@ def changeDirectory():
     try:
         os.chdir(pathString)
         currentPathString = pathString
-        print(f"Changing directory to: {pathString}")
+        print(f"[{currentTime()}] Changing directory to: {pathString}")
     except:
-        print(f"Changing directory to: {pathString} failed.")
+        print(f"[{currentTime()}]Changing directory to: {pathString} failed.")
 
         # Rewrite the path
         pathEntry.delete(0, tk.END)
