@@ -1,4 +1,5 @@
 #!/bin/python3
+from distutils import filelist
 import os
 import configparser
 import tkinter as tk
@@ -7,6 +8,12 @@ from datetime import datetime
 def currentTime():
     now = datetime.now()
     return now.strftime("%Y.%m.%d %H:%M:%S")    
+
+def updateFileList():
+    global currentPathString
+    fileList = os.listdir()
+    for i in range(len(fileList)):
+        fileListBox.insert(i + 1, fileList[i])
 
 currentPathString = os.getcwd()
 
@@ -32,6 +39,7 @@ if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read("pb.conf")
     windowSize = config["DEFAULT"]["WindowSize"]
+    pathEntryWidth = int(config["DEFAULT"]["PathEntryWidth"])
     fgColor = config["THEME"]["fg"]
     bgColor = config["THEME"]["bg"]
 
@@ -62,7 +70,7 @@ if __name__ == "__main__":
     # Navigator Frame: Folder navigation
     navigatorFrame = tk.Frame(master=mainWin)
     locationLabel = tk.Label(master=navigatorFrame, text="Path: ", fg=fgColor, bg=bgColor)
-    pathEntry = tk.Entry(master=navigatorFrame, width=100, fg=fgColor, bg = bgColor)
+    pathEntry = tk.Entry(master=navigatorFrame, width=pathEntryWidth, fg=fgColor, bg = bgColor)
     goButton = tk.Button(master=navigatorFrame, text="Navigate", fg=fgColor, bg=bgColor, command=changeDirectory)
 
     locationLabel.grid(row=0,column=0)
@@ -73,8 +81,16 @@ if __name__ == "__main__":
     
     # Content Frame: Shows the files.
     contentFrame = tk.Frame(master=mainWin)
+    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth)
+    updateFileList()
+    fileListScrollbar = tk.Scrollbar(master=contentFrame)
+    fileListBox.config(yscrollcommand = fileListScrollbar.set)
+    fileListScrollbar.pack()
 
-    contentFrame.grid(row=1,column=1)
+
+    fileListBox.pack(side = tk.LEFT)
+    #fileListBox.grid(row=0,column=0)
+    contentFrame.grid(row=1,column=0)
 
 
 
