@@ -4,6 +4,8 @@ import os
 import configparser
 import tkinter as tk
 from datetime import datetime
+from filelib.file import property_summary
+import subprocess
 
 def currentTime():
     now = datetime.now()
@@ -26,24 +28,36 @@ def updateFileList():
 
 currentPathString = os.getcwd()
 
-def changeDirectory():
+def navigateDirectory(pathString=None):
     global currentPathString
-    pathString = pathEntry.get()
-    try:
-        os.chdir(pathString)
-        currentPathString = pathString
-        print(f"[{currentTime()}] Changing directory to: {pathString}")
+    if not pathString:
+        pathString = pathEntry.get()
 
-        # Refresh content list
-        fileListBox.delete(0, tk.END)
-        updateFileList()
-    except:
-        print(f"[{currentTime()}]Changing directory to: {pathString} failed.")
+    # If Directory
+    if os.path.isdir(pathString):
+        try:
+            os.chdir(pathString)
+            currentPathString = pathString
+            print(f"[{currentTime()}] Changing directory to: {pathString}")
 
-        # Rewrite the path
-        pathEntry.delete(0, tk.END)
-        pathEntry.insert(0, currentPathString)
+            # Refresh content list
+            fileListBox.delete(0, tk.END)
+            updateFileList()
+            pathEntry.delete(0, tk.END)
+            pathEntry.insert(0, currentPathString)
+        except:
+            print(f"[{currentTime()}] Changing directory to: {pathString} failed.")
 
+            # Rewrite the path
+            pathEntry.delete(0, tk.END)
+            pathEntry.insert(0, currentPathString)
+    # If file
+    elif os.path.isfile(pathString):
+        try:
+            subprocess.run([openFileMethod, pathString])
+            print(f"[{currentTime()}] Opened {pathString} with default application.")
+        except:
+            print(f"[{currentTime()}] Opening {pathString} with default application failed.")
 
 def upDirectory():
     global currentPathString
@@ -68,6 +82,7 @@ if __name__ == "__main__":
     fgColor = config["THEME"]["fg"]
     bgColor = config["THEME"]["bg"]
     folderColor = config["THEME"]["folder"]
+    openFileMethod = config["ACTION"]["open"]
 
 
     # Main Window
@@ -96,18 +111,19 @@ if __name__ == "__main__":
 
 
     # Navigator Frame: Folder navigation
-    navigatorFrame = tk.Frame(master=mainWin)
+    navigatorFrame = tk.Frame(master=mainWin, bg=bgColor)
     locationLabel = tk.Label(master=navigatorFrame, text="Path: ", fg=fgColor, bg=bgColor)
     pathEntry = tk.Entry(master=navigatorFrame, width=pathEntryWidth, fg=fgColor, bg = bgColor)
-    goButton = tk.Button(master=navigatorFrame, text="Navigate", fg=fgColor, bg=bgColor, command=changeDirectory)
-    upFolderButton = tk.Button(master=navigatorFrame, text="Up Folder", fg=fgColor, bg=bgColor, command=upDirectory)
+    goButton = tk.Button(master=navigatorFrame, text="Navigate", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory())
+    upFolderButton = tk.Button(master=navigatorFrame, text="Up Folder", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory(os.path.dirname(currentPathString)))
 
     locationLabel.grid(row=0,column=0)
     pathEntry.grid(row=0,column=1)
     pathEntry.insert(0, os.getcwd())
     goButton.grid(row=0,column=2)
     upFolderButton.grid(row=0, column=3)
-    navigatorFrame.grid(row=0,column=0)
+    #navigatorFrame.place(x=20, y=20)
+    navigatorFrame.pack(fill = tk.X)
     
     # Content Frame: Shows the files.
     contentFrame = tk.Frame(master=mainWin)
@@ -119,26 +135,49 @@ if __name__ == "__main__":
     fileListScrollbar.pack()
 
 
-    fileListBox.pack(side = tk.LEFT)
+    fileListBox.pack(fill = tk.X)
     fileListScrollbar.pack(side = tk.RIGHT)
     #fileListBox.grid(row=0,column=0)
-    contentFrame.grid(row=1,column=0)
+    #contentFrame.place(x=20, y=60)
+    contentFrame.pack(fill = tk.X)
 
     # Properties Frame: Shows properties of the file
+    fileSizeStringVar = tk.StringVar()
+    fileSizeStringVar.set("Size: ")
+    fileLastModifiedStringVar = tk.StringVar()
+    fileLastModifiedStringVar.set("Last Modified: ")
+    fileCreationStringVar = tk.StringVar()
+    fileCreationStringVar.set("Created: ")
+    osStatStringVar = tk.StringVar()
+    osStatStringVar.set("Raw File Stat:")
+
     propertiesFrame = tk.Frame(master=mainWin, bg=bgColor)
-    propertiesLabel = tk.Label(master=propertiesFrame, text="Properties", fg=fgColor, bg=bgColor)
-    fileSizeLabel = tk.Label(master=propertiesFrame, text="Size: ", fg=fgColor, bg=bgColor)
-    fileLastModifiedLabel = tk.Label(master=propertiesFrame, text="Last Modified: ", fg=fgColor, bg=bgColor)
-    fileLastCreationLabel = tk.Label(master=propertiesFrame, text="Creation: ", fg=fgColor, bg=bgColor)
+    propertiesLabel = tk.Label(master=propertiesFrame, text="Properties: ", fg=fgColor, bg=bgColor)
+    fileSizeLabel = tk.Label(master=propertiesFrame, textvariable=fileSizeStringVar, fg=fgColor, bg=bgColor)
+    fileLastModifiedLabel = tk.Label(master=propertiesFrame, textvariable=fileLastModifiedStringVar, fg=fgColor, bg=bgColor)
+    fileCreationLabel = tk.Label(master=propertiesFrame, textvariable=fileCreationStringVar, fg=fgColor, bg=bgColor)
+    osStatLabel = tk.Label(master=propertiesFrame, textvariable=osStatStringVar, fg=fgColor, bg=bgColor)
 
-    propertiesLabel.grid(row=0,column=0)
-    fileSizeLabel.grid(row=1, column=0)
-    fileLastModifiedLabel.grid(row=2, column=0)
-    fileLastCreationLabel.grid(row=3, column=0)
-    propertiesFrame.grid(row=2,column=0)
+    #propertiesLabel.grid(row=0,column=0)
+    #fileSizeLabel.grid(row=1, column=0)
+    #fileLastModifiedLabel.grid(row=2, column=0)
+    #fileCreationLabel.grid(row=3, column=0)
+    #osStatLabel.grid(row=4, column=0)
+    
+    propertiesLabel.pack(anchor="w")
+    fileSizeLabel.pack(anchor="w")
+    fileLastModifiedLabel.pack(anchor="w")
+    fileCreationLabel.pack(anchor="w")
+    osStatLabel.pack(anchor="w")
+    propertiesFrame.pack(fill = tk.X, expand=False)
 
 
+    # Bindings
 
+    # Property Update
+    fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary(currentPathString, fileListBox,fileSizeStringVar, fileLastModifiedStringVar, fileCreationStringVar, osStatStringVar))
+    # Navigate directory / Open file
+    fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
 
 
     mainWin.mainloop()
