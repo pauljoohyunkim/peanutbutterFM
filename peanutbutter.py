@@ -24,6 +24,10 @@ def changeDirectory():
         os.chdir(pathString)
         currentPathString = pathString
         print(f"[{currentTime()}] Changing directory to: {pathString}")
+
+        # Refresh content list
+        fileListBox.delete(0, tk.END)
+        updateFileList()
     except:
         print(f"[{currentTime()}]Changing directory to: {pathString} failed.")
 
@@ -81,14 +85,16 @@ if __name__ == "__main__":
     
     # Content Frame: Shows the files.
     contentFrame = tk.Frame(master=mainWin)
-    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth)
+    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth, fg=fgColor, bg=bgColor)
     updateFileList()
     fileListScrollbar = tk.Scrollbar(master=contentFrame)
     fileListBox.config(yscrollcommand = fileListScrollbar.set)
+    fileListScrollbar.config(command = fileListBox.yview)
     fileListScrollbar.pack()
 
 
     fileListBox.pack(side = tk.LEFT)
+    fileListScrollbar.pack(side = tk.RIGHT)
     #fileListBox.grid(row=0,column=0)
     contentFrame.grid(row=1,column=0)
 
