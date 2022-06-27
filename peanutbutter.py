@@ -36,6 +36,18 @@ def changeDirectory():
         pathEntry.insert(0, currentPathString)
 
 
+def upDirectory():
+    global currentPathString
+    pathString = os.path.dirname(currentPathString)
+    os.chdir(pathString)
+    currentPathString = pathString
+    print(f"[{currentTime()}] Changing directory to: {pathString}")
+
+    # Refresh content list
+    fileListBox.delete(0, tk.END)
+    updateFileList()
+    pathEntry.delete(0, tk.END)
+    pathEntry.insert(0, currentPathString)
 
 if __name__ == "__main__":
 
@@ -51,6 +63,7 @@ if __name__ == "__main__":
     mainWin = tk.Tk()
     mainWin.title("Peanut Butter FM")
     mainWin.geometry(windowSize)
+    mainWin.configure(bg=bgColor)
     # Menu Bar
     menubar = tk.Menu(mainWin)
     # File Menu
@@ -76,11 +89,13 @@ if __name__ == "__main__":
     locationLabel = tk.Label(master=navigatorFrame, text="Path: ", fg=fgColor, bg=bgColor)
     pathEntry = tk.Entry(master=navigatorFrame, width=pathEntryWidth, fg=fgColor, bg = bgColor)
     goButton = tk.Button(master=navigatorFrame, text="Navigate", fg=fgColor, bg=bgColor, command=changeDirectory)
+    upFolderButton = tk.Button(master=navigatorFrame, text="Up Folder", fg=fgColor, bg=bgColor, command=upDirectory)
 
     locationLabel.grid(row=0,column=0)
     pathEntry.grid(row=0,column=1)
     pathEntry.insert(0, os.getcwd())
     goButton.grid(row=0,column=2)
+    upFolderButton.grid(row=0, column=3)
     navigatorFrame.grid(row=0,column=0)
     
     # Content Frame: Shows the files.
