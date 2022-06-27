@@ -1,5 +1,4 @@
 #!/bin/python3
-from distutils import filelist
 import os
 import configparser
 import tkinter as tk
