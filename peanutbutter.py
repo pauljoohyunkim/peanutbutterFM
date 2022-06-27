@@ -113,7 +113,18 @@ if __name__ == "__main__":
     #fileListBox.grid(row=0,column=0)
     contentFrame.grid(row=1,column=0)
 
+    # Properties Frame: Shows properties of the file
+    propertiesFrame = tk.Frame(master=mainWin, bg=bgColor)
+    propertiesLabel = tk.Label(master=propertiesFrame, text="Properties", fg=fgColor, bg=bgColor)
+    fileSizeLabel = tk.Label(master=propertiesFrame, text="Size: ", fg=fgColor, bg=bgColor)
+    fileLastModifiedLabel = tk.Label(master=propertiesFrame, text="Last Modified: ", fg=fgColor, bg=bgColor)
+    fileLastCreationLabel = tk.Label(master=propertiesFrame, text="Creation: ", fg=fgColor, bg=bgColor)
 
+    propertiesLabel.grid(row=0,column=0)
+    fileSizeLabel.grid(row=1, column=0)
+    fileLastModifiedLabel.grid(row=2, column=0)
+    fileLastCreationLabel.grid(row=3, column=0)
+    propertiesFrame.grid(row=2,column=0)
 
 
 
