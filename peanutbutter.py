@@ -12,8 +12,17 @@ def currentTime():
 def updateFileList():
     global currentPathString
     fileList = os.listdir()
-    for i in range(len(fileList)):
-        fileListBox.insert(i + 1, fileList[i])
+
+    # Directories first
+    for file in fileList:
+        if os.path.isdir(file):
+            fileListBox.insert(tk.END, file)
+            fileListBox.itemconfig(tk.END, {"fg": folderColor})
+    
+    # Then files
+    for file in fileList:
+        if os.path.isfile(file):
+            fileListBox.insert(tk.END, file)
 
 currentPathString = os.getcwd()
 
@@ -58,6 +67,8 @@ if __name__ == "__main__":
     pathEntryWidth = int(config["DEFAULT"]["PathEntryWidth"])
     fgColor = config["THEME"]["fg"]
     bgColor = config["THEME"]["bg"]
+    folderColor = config["THEME"]["folder"]
+
 
     # Main Window
     mainWin = tk.Tk()
