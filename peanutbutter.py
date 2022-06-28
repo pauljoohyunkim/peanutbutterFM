@@ -3,8 +3,7 @@ import os
 import configparser
 import tkinter as tk
 from datetime import datetime
-from filelib.file import property_summary
-from filelib.images import imageCanvas
+from filelib.images import imageCanvas, supported_img_types
 import subprocess
 
 def currentTime():
@@ -72,6 +71,28 @@ def upDirectory():
     pathEntry.delete(0, tk.END)
     pathEntry.insert(0, currentPathString)
 
+def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStringVar, createdStringVar, osStatStringVar, imagePreviewCanvas):
+    global previewImage
+    cs = fileListBox.curselection()
+    if len(cs) == 1:
+        filename = fileListBox.get(cs[0])
+        fullFilename = os.path.join(currentPathString, filename)
+        size = os.path.getsize(fullFilename)
+        modifiedTime = os.path.getmtime(fullFilename)
+        creationTime = os.path.getctime(fullFilename)
+        stat_result = os.stat(fullFilename)
+        sizeStringVar.set(f"Size: {size} bytes")
+        modifiedStringVar.set(f"Last Modified: {modifiedTime}")
+        createdStringVar.set(f"Created: {creationTime}")
+        osStatStringVar.set(f"Raw File Stat: {stat_result}")
+        #imagePreviewCanvas.delete("all")
+        if fullFilename.endswith(supported_img_types):
+            print("It is a supported image")
+            imagePreviewCanvas.delete("all")
+            previewImage = imageCanvas(fullFilename)
+            imagePreviewCanvas.create_image(10,10,anchor=tk.NW,image = previewImage)
+        else:
+            imagePreviewCanvas.delete("all")
 if __name__ == "__main__":
 
     # Configuration & Initialization
@@ -92,6 +113,9 @@ if __name__ == "__main__":
     mainWin.title("Peanut Butter FM")
     mainWin.geometry(windowSize)
     mainWin.configure(bg=bgColor)
+    
+    previewImage = imageCanvas("PNG_Test.png")
+    
     # Menu Bar
     menubar = tk.Menu(mainWin)
     # File Menu
@@ -181,13 +205,13 @@ if __name__ == "__main__":
     imagePreviewCanvas.pack()
 
     previewImage = imageCanvas("PNG_Test.png")
-    imagePreviewCanvas.create_image(10, 10, anchor=tk.NW, image=previewImage)
+    imageContainer = imagePreviewCanvas.create_image(10, 10, anchor=tk.NW, image=previewImage)
     imagePreviewFrame.pack()
 
     # Bindings
 
     # Property Update
-    fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary(currentPathString, fileListBox,fileSizeStringVar, fileLastModifiedStringVar, fileCreationStringVar, osStatStringVar))
+    fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary(currentPathString, fileListBox,fileSizeStringVar, fileLastModifiedStringVar, fileCreationStringVar, osStatStringVar, imagePreviewCanvas))
     # Navigate directory / Open file
     fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
 
