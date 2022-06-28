@@ -1,5 +1,6 @@
 #!/bin/python3
 import os
+import re
 import configparser
 import tkinter as tk
 from tkinter import messagebox
@@ -106,6 +107,20 @@ def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStrin
         else:
             imagePreviewFrame.forget()
             imagePreviewCanvas.delete("all")
+
+def autoCompletePath():
+    global currentPathString
+    folders = [folder for folder in os.listdir() if os.path.isdir(os.path.join(currentPathString,folder))]
+    possibilities = [folder for folder in folders if re.search("^" + os.path.basename(pathEntry.get()), folder)]
+    if len(possibilities) == 1:
+        pathEntry.delete(0, tk.END)
+        pathEntry.insert(0, os.path.join(currentPathString, possibilities[0]))
+       # navigatorFrame.focus()
+       # pathEntry.focus()
+        print(f"[{currentTime()}] Autocompletion")
+
+
+
 
 def fileActionDelete():
     global currentPathString
@@ -244,11 +259,13 @@ if __name__ == "__main__":
     fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
     pathEntry.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
+    # Autocompletion for Folders
+    pathEntry.bind("<Tab>", lambda event: autoCompletePath())
     # Listbox Cursor Movement
     # HOME for the first item
     # END for the last item
-    fileListBox.bind("<Home>", lambda event: fileListBox.select_clear(0, tk.END) or fileListBox.selection_set(0))
-    fileListBox.bind("<End>", lambda event: fileListBox.select_clear(0, tk.END) or fileListBox.selection_set(tk.END))
+    fileListBox.bind("<Home>", lambda event: fileListBox.select_clear(0, tk.END) == fileListBox.selection_set(0))
+    fileListBox.bind("<End>", lambda event: fileListBox.select_clear(0, tk.END) == fileListBox.selection_set(tk.END))
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
 
