@@ -1,9 +1,11 @@
 #!/bin/python3
 import os
+import re
 import configparser
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
+from filelib.hasher import sha256sum, md5sum
 from filelib.images import imageCanvas, supported_img_types, simpleTkImage
 import subprocess
 
@@ -107,6 +109,19 @@ def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStrin
             imagePreviewFrame.forget()
             imagePreviewCanvas.delete("all")
 
+def autoCompletePath():
+    global currentPathString
+    folders = [folder for folder in os.listdir() if os.path.isdir(os.path.join(currentPathString,folder))]
+    possibilities = [folder for folder in folders if re.search("^" + os.path.basename(pathEntry.get()), folder)]
+    if len(possibilities) == 1:
+        pathEntry.delete(0, tk.END)
+        pathEntry.insert(0, os.path.join(currentPathString, possibilities[0]))
+        print(f"[{currentTime()}] Autocompletion")
+    return "break"      # For disabling highlight of pathEntry
+
+
+
+
 def fileActionDelete():
     global currentPathString
     fileName = os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))
@@ -116,6 +131,20 @@ def fileActionDelete():
         os.remove(fileName)
         print(f"Removed file")
         updateFileList()
+
+def showHash(hashtype):
+    global currentPathString
+    fileName = os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))
+    
+    if os.path.isfile(fileName) == False:
+        messagebox.showerror(f"SHA256: {fileName}", f"{fileName} is not a file.")
+        return 1
+    
+    if hashtype == "sha256":
+        messagebox.showinfo(f"SHA256: {fileName}", f"{sha256sum(fileName)}")
+    if hashtype == "md5":
+        messagebox.showinfo(f"MD5: {fileName}", f"{md5sum(fileName)}")
+
 
 if __name__ == "__main__":
 
@@ -153,8 +182,8 @@ if __name__ == "__main__":
     menubar.add_cascade(label="File", menu=fileMenu)
     # Hash Menu
     hashMenu = tk.Menu(menubar, tearoff=0)
-    hashMenu.add_command(label="MD5")
-    hashMenu.add_command(label="SHA-256")
+    hashMenu.add_command(label="MD5", command=lambda: showHash("md5"))
+    hashMenu.add_command(label="SHA-256", command=lambda: showHash("sha256"))
     menubar.add_cascade(label="Hash", menu=hashMenu)
     mainWin.config(menu=menubar)
 
@@ -163,12 +192,13 @@ if __name__ == "__main__":
     navigatorFrame = tk.Frame(master=mainWin, bg=bgColor)
     locationLabel = tk.Label(master=navigatorFrame, text="Path: ", fg=fgColor, bg=bgColor)
     pathEntry = tk.Entry(master=navigatorFrame, width=pathEntryWidth, fg=fgColor, bg = bgColor)
-    goButton = tk.Button(master=navigatorFrame, text="Navigate", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory())
-    upFolderButton = tk.Button(master=navigatorFrame, text="Up Folder", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory(os.path.dirname(currentPathString)))
+    goButton = tk.Button(master=navigatorFrame, text="Navigate", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory(), takefocus=False)
+    upFolderButton = tk.Button(master=navigatorFrame, text="Up Folder", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory(os.path.dirname(currentPathString)), takefocus=False)
 
     locationLabel.grid(row=0,column=0)
     pathEntry.grid(row=0,column=1)
     pathEntry.insert(0, os.getcwd())
+    pathEntry.focus()
     goButton.grid(row=0,column=2)
     upFolderButton.grid(row=0, column=3)
     #navigatorFrame.place(x=20, y=20)
@@ -176,9 +206,9 @@ if __name__ == "__main__":
     
     # Content Frame: Shows the files.
     contentFrame = tk.Frame(master=mainWin)
-    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth, fg=fgColor, bg=bgColor)
+    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth, fg=fgColor, bg=bgColor, takefocus=False)
     updateFileList()
-    fileListScrollbar = tk.Scrollbar(master=contentFrame)
+    fileListScrollbar = tk.Scrollbar(master=contentFrame, takefocus=False)
     fileListBox.config(yscrollcommand = fileListScrollbar.set)
     fileListScrollbar.config(command = fileListBox.yview)
     fileListScrollbar.pack()
@@ -246,11 +276,13 @@ if __name__ == "__main__":
     fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
     pathEntry.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
+    # Autocompletion for Folders
+    pathEntry.bind("<Tab>", lambda event: autoCompletePath())
     # Listbox Cursor Movement
     # HOME for the first item
     # END for the last item
-    fileListBox.bind("<Home>", lambda event: fileListBox.select_clear(0, tk.END) or fileListBox.selection_set(0))
-    fileListBox.bind("<End>", lambda event: fileListBox.select_clear(0, tk.END) or fileListBox.selection_set(tk.END))
+    fileListBox.bind("<Home>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(0)])
+    fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
 
