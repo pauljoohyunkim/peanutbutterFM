@@ -21,3 +21,5 @@ def imageCanvas(imagePath, canvasSize):
     #labelObject.config(image = img)
     return img
     
+def simpleTkImage(imagePath):
+    return ImageTk.PhotoImage(Image.open(imagePath))
