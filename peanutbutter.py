@@ -133,7 +133,7 @@ def autoCompletePath():
 
 def fileActionDelete():
     global currentPathString
-    fileName = os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))
+    fileName = os.path.join(currentPathString, fileListBox.selection_get())
     deleteQ = messagebox.askyesno("Deletion Warning", f"Delete {fileName}?")
 
     if deleteQ == True:
@@ -147,7 +147,7 @@ def fileActionDelete():
 
 def showHash(hashtype):
     global currentPathString
-    fileName = os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))
+    fileName = os.path.join(currentPathString, fileListBox.selection_get())
     
     if os.path.isfile(fileName) == False:
         messagebox.showerror(f"SHA256: {fileName}", f"{fileName} is not a file.")
@@ -255,7 +255,7 @@ if __name__ == "__main__":
     # File Menu
     fileMenu = tk.Menu(menubar, tearoff=0)
     fileMenu.add_command(label="New")
-    fileMenu.add_command(label="Open", command=lambda: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
+    fileMenu.add_command(label="Open", command=lambda: navigateDirectory(os.path.join(currentPathString, fileListBox.selection_get())))
     fileMenu.add_command(label="Properties")
     fileMenu.add_separator()
     fileMenu.add_command(label="Recent Files")
@@ -278,8 +278,8 @@ if __name__ == "__main__":
     # Navigate directory / Open file
     # Double click and Enter for navigation
     # Escape for upper folder
-    fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
-    fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
+    fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.selection_get())))
+    fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.selection_get())))
     fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
     pathEntry.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
