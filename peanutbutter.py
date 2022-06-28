@@ -4,6 +4,7 @@ import configparser
 import tkinter as tk
 from datetime import datetime
 from filelib.file import property_summary
+from filelib.images import imageCanvas
 import subprocess
 
 def currentTime():
@@ -78,6 +79,8 @@ if __name__ == "__main__":
     config.read("pb.conf")
     windowSize = config["DEFAULT"]["WindowSize"]
     pathEntryWidth = int(config["DEFAULT"]["PathEntryWidth"])
+    imagePreviewWidth = int(config["DEFAULT"]["ImagePreviewWidth"])
+    imagePreviewHeight = int(config["DEFAULT"]["ImagePreviewHeight"])
     fgColor = config["THEME"]["fg"]
     bgColor = config["THEME"]["bg"]
     folderColor = config["THEME"]["folder"]
@@ -170,6 +173,16 @@ if __name__ == "__main__":
     osStatLabel.pack(anchor="w")
     propertiesFrame.pack(fill = tk.X, expand=False)
 
+    # Image Preview Frame
+    imagePreviewFrame = tk.Frame(master=mainWin, bg=bgColor)
+    imagePreviewLabel = tk.Label(master=imagePreviewFrame, text="Preview", fg=fgColor, bg=bgColor)
+    imagePreviewLabel.pack()
+    imagePreviewCanvas = tk.Canvas(master=imagePreviewFrame, width=imagePreviewWidth, height=imagePreviewHeight)    
+    imagePreviewCanvas.pack()
+
+    previewImage = imageCanvas("PNG_Test.png")
+    imagePreviewCanvas.create_image(10, 10, anchor=tk.NW, image=previewImage)
+    imagePreviewFrame.pack()
 
     # Bindings
 
