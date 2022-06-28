@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
 from filelib.images import imageCanvas, supported_img_types
+from filelib.hasher import sha256sum, md5sum
 import subprocess
 
 currentPathString = os.getcwd()
@@ -131,6 +132,20 @@ def fileActionDelete():
         print(f"Removed file")
         updateFileList()
 
+def showHash(hashtype):
+    global currentPathString
+    fileName = os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))
+    
+    if os.path.isfile(fileName) == False:
+        messagebox.showerror(f"SHA256: {fileName}", f"{fileName} is not a file.")
+        return 1
+    
+    if hashtype == "sha256":
+        messagebox.showinfo(f"SHA256: {fileName}", f"{sha256sum(fileName)}")
+    if hashtype == "md5":
+        messagebox.showinfo(f"MD5: {fileName}", f"{md5sum(fileName)}")
+
+
 if __name__ == "__main__":
 
     # Configuration & Initialization
@@ -165,8 +180,8 @@ if __name__ == "__main__":
     menubar.add_cascade(label="File", menu=fileMenu)
     # Hash Menu
     hashMenu = tk.Menu(menubar, tearoff=0)
-    hashMenu.add_command(label="MD5")
-    hashMenu.add_command(label="SHA-256")
+    hashMenu.add_command(label="MD5", command=lambda: showHash("md5"))
+    hashMenu.add_command(label="SHA-256", command=lambda: showHash("sha256"))
     menubar.add_cascade(label="Hash", menu=hashMenu)
     mainWin.config(menu=menubar)
 
