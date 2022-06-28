@@ -81,20 +81,20 @@ def navigateDirectory(pathString=None):
         fileListBox.select_clear(0, tk.END)
         fileListBox.selection_set(0)
         imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
-def upDirectory():
-    global currentPathString
-    pathString = os.path.dirname(currentPathString)
-    os.chdir(pathString)
-    currentPathString = pathString
-    print(f"[{currentTime()}] Changing directory to: {pathString}")
+#def upDirectory():
+    #global currentPathString
+    #pathString = os.path.dirname(currentPathString)
+    #os.chdir(pathString)
+    #currentPathString = pathString
+    #print(f"[{currentTime()}] Changing directory to: {pathString}")
 
-    # Refresh content list
-    fileListBox.delete(0, tk.END)
-    updateFileList()
+    ## Refresh content list
+    #fileListBox.delete(0, tk.END)
+    #updateFileList()
 
-    # Update pathEntry text
-    pathEntry.delete(0, tk.END)
-    pathEntry.insert(0, currentPathString)
+    ## Update pathEntry text
+    #pathEntry.delete(0, tk.END)
+    #pathEntry.insert(0, currentPathString)
 
 def property_summary():
     global previewImage
