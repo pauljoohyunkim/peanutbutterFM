@@ -58,7 +58,12 @@ def navigateDirectory(pathString=None):
             print(f"[{currentTime()}] Opened {pathString} with default application.")
         except:
             print(f"[{currentTime()}] Opening {pathString} with default application failed.")
-
+    
+    else:
+        print(f"[{currentTime()}] Changing directory to: {pathString} failed.")
+        # Rewrite the path
+        pathEntry.delete(0, tk.END)
+        pathEntry.insert(0, currentPathString)
 def upDirectory():
     global currentPathString
     pathString = os.path.dirname(currentPathString)
@@ -214,7 +219,8 @@ if __name__ == "__main__":
     fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary(currentPathString, fileListBox,fileSizeStringVar, fileLastModifiedStringVar, fileCreationStringVar, osStatStringVar, imagePreviewCanvas))
     # Navigate directory / Open file
     fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
-
+    fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
+    pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
 
     mainWin.mainloop()
 
