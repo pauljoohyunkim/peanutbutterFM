@@ -64,6 +64,8 @@ def navigateDirectory(pathString=None):
         # Rewrite the path
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, currentPathString)
+    
+    fileListBox.selection_set(0)
 def upDirectory():
     global currentPathString
     pathString = os.path.dirname(currentPathString)
@@ -216,12 +218,21 @@ if __name__ == "__main__":
     # Bindings
 
     # Property Update
+    # At every selection, the property summary gets updated.
     fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary(currentPathString, fileListBox,fileSizeStringVar, fileLastModifiedStringVar, fileCreationStringVar, osStatStringVar, imagePreviewCanvas))
     # Navigate directory / Open file
+    # Double click and Enter for navigation
+    # Escape for upper folder
     fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
     fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
     fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
+    # Listbox Cursor Movement
+    # HOME for the first item
+    # END for the last item
+    fileListBox.bind("<Home>", lambda event: fileListBox.select_clear(0, tk.END) or fileListBox.selection_set(0))
+    fileListBox.bind("<End>", lambda event: fileListBox.select_clear(0, tk.END) or fileListBox.selection_set(tk.END))
+
 
     mainWin.mainloop()
 
