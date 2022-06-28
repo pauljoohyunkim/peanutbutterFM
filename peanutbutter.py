@@ -220,6 +220,7 @@ if __name__ == "__main__":
     # Navigate directory / Open file
     fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
     fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
+    fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
 
     mainWin.mainloop()
