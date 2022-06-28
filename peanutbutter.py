@@ -76,10 +76,11 @@ def navigateDirectory(pathString=None):
     # If a file is already selected, keep the selection.
     # Otherwise, force the selection onto the first item.
     try:
-        fileListBox.selection_get()
+        imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
     except:
         fileListBox.select_clear(0, tk.END)
         fileListBox.selection_set(0)
+        imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
 def upDirectory():
     global currentPathString
     pathString = os.path.dirname(currentPathString)
