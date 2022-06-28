@@ -72,8 +72,11 @@ def navigateDirectory(pathString=None):
         # Rewrite the path
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, currentPathString)
-    
-    fileListBox.selection_set(0)
+    try:
+        fileListBox.selection_get()
+    except:
+        fileListBox.select_clear(0, tk.END)
+        fileListBox.selection_set(0)
 def upDirectory():
     global currentPathString
     pathString = os.path.dirname(currentPathString)
@@ -173,26 +176,6 @@ if __name__ == "__main__":
     icon = simpleTkImage("peanutbutter.jpg")
     mainWin.wm_iconphoto(False, icon)
     
-    # Menu Bar
-    menubar = tk.Menu(mainWin)
-    # File Menu
-    fileMenu = tk.Menu(menubar, tearoff=0)
-    fileMenu.add_command(label="New")
-    fileMenu.add_command(label="Open")
-    fileMenu.add_command(label="Properties")
-    fileMenu.add_separator()
-    fileMenu.add_command(label="Recent Files")
-    fileMenu.add_separator()
-    fileMenu.add_command(label="Quit", command=mainWin.quit)
-    menubar.add_cascade(label="File", menu=fileMenu)
-    # Hash Menu
-    hashMenu = tk.Menu(menubar, tearoff=0)
-    hashMenu.add_command(label="MD5", command=lambda: showHash("md5"))
-    hashMenu.add_command(label="SHA-256", command=lambda: showHash("sha256"))
-    menubar.add_cascade(label="Hash", menu=hashMenu)
-    mainWin.config(menu=menubar)
-
-
     # Navigator Frame: Folder navigation
     navigatorFrame = tk.Frame(master=mainWin, bg=bgColor)
     locationLabel = tk.Label(master=navigatorFrame, text="Path: ", fg=fgColor, bg=bgColor)
@@ -261,6 +244,26 @@ if __name__ == "__main__":
     #previewImage = imageCanvas("PNG_Test.png", (imagePreviewHeight, imagePreviewWidth))
     #imageContainer = imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
     #imagePreviewFrame.pack()
+
+    # Menu Bar
+    menubar = tk.Menu(mainWin)
+    # File Menu
+    fileMenu = tk.Menu(menubar, tearoff=0)
+    fileMenu.add_command(label="New")
+    fileMenu.add_command(label="Open", command=lambda: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
+    fileMenu.add_command(label="Properties")
+    fileMenu.add_separator()
+    fileMenu.add_command(label="Recent Files")
+    fileMenu.add_separator()
+    fileMenu.add_command(label="Quit", command=mainWin.quit)
+    menubar.add_cascade(label="File", menu=fileMenu)
+    # Hash Menu
+    hashMenu = tk.Menu(menubar, tearoff=0)
+    hashMenu.add_command(label="MD5", command=lambda: showHash("md5"))
+    hashMenu.add_command(label="SHA-256", command=lambda: showHash("sha256"))
+    menubar.add_cascade(label="Hash", menu=hashMenu)
+    mainWin.config(menu=menubar)
+
 
     # Bindings
 
