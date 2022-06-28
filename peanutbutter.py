@@ -87,7 +87,7 @@ def upDirectory():
     pathEntry.delete(0, tk.END)
     pathEntry.insert(0, currentPathString)
 
-def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStringVar, createdStringVar, osStatStringVar, imagePreviewCanvas):
+def property_summary():
     global previewImage
     cs = fileListBox.curselection()
     if len(cs) == 1:
@@ -97,9 +97,9 @@ def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStrin
         modifiedTime = os.path.getmtime(fullFilename)
         creationTime = os.path.getctime(fullFilename)
         stat_result = os.stat(fullFilename)
-        sizeStringVar.set(f"Size: {size} bytes")
-        modifiedStringVar.set(f"Last Modified: {modifiedTime}")
-        createdStringVar.set(f"Created: {creationTime}")
+        fileSizeStringVar.set(f"Size: {size} bytes")
+        fileLastModifiedStringVar.set(f"Last Modified: {modifiedTime}")
+        fileCreationStringVar.set(f"Created: {creationTime}")
         osStatStringVar.set(f"Raw File Stat: {stat_result}")
         if fullFilename.endswith(supported_img_types):
             imagePreviewFrame.pack()
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     mainWin.title("Peanut Butter FM")
     mainWin.geometry(windowSize)
     mainWin.configure(bg=bgColor)
-    icon = simpleTkImage("/home/pbjk/Documents/Programming/peanutbutterFM/peanutbutter.jpg")
+    icon = simpleTkImage("peanutbutter.jpg")
     mainWin.wm_iconphoto(False, icon)
     
     # Menu Bar
@@ -242,12 +242,6 @@ if __name__ == "__main__":
     fileLastModifiedLabel = tk.Label(master=propertiesFrame, textvariable=fileLastModifiedStringVar, fg=fgColor, bg=bgColor)
     fileCreationLabel = tk.Label(master=propertiesFrame, textvariable=fileCreationStringVar, fg=fgColor, bg=bgColor)
     osStatLabel = tk.Label(master=propertiesFrame, textvariable=osStatStringVar, fg=fgColor, bg=bgColor)
-
-    #propertiesLabel.grid(row=0,column=0)
-    #fileSizeLabel.grid(row=1, column=0)
-    #fileLastModifiedLabel.grid(row=2, column=0)
-    #fileCreationLabel.grid(row=3, column=0)
-    #osStatLabel.grid(row=4, column=0)
     
     propertiesLabel.pack(anchor="w")
     fileSizeLabel.pack(anchor="w")
@@ -272,7 +266,7 @@ if __name__ == "__main__":
 
     # Property Update
     # At every selection, the property summary gets updated.
-    fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary(currentPathString, fileListBox,fileSizeStringVar, fileLastModifiedStringVar, fileCreationStringVar, osStatStringVar, imagePreviewCanvas))
+    fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary())
     # Navigate directory / Open file
     # Double click and Enter for navigation
     # Escape for upper folder
