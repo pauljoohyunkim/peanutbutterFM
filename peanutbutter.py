@@ -110,12 +110,12 @@ def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStrin
             imagePreviewCanvas.delete("all")
 
 def autoCompletePath():
-    global currentPathString
-    folders = [folder for folder in os.listdir() if os.path.isdir(os.path.join(currentPathString,folder))]
+    currentEntryDir = os.path.dirname(pathEntry.get())
+    folders = [folder for folder in os.listdir(currentEntryDir) if os.path.isdir(os.path.join(currentEntryDir,folder))]
     possibilities = [folder for folder in folders if re.search("^" + os.path.basename(pathEntry.get()), folder)]
     if len(possibilities) == 1:
         pathEntry.delete(0, tk.END)
-        pathEntry.insert(0, os.path.join(currentPathString, possibilities[0]))
+        pathEntry.insert(0, os.path.join(currentEntryDir, possibilities[0]))
         print(f"[{currentTime()}] Autocompletion")
     return "break"      # For disabling highlight of pathEntry
 
