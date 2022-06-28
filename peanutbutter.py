@@ -2,6 +2,7 @@
 import os
 import configparser
 import tkinter as tk
+from tkinter import messagebox
 from datetime import datetime
 from filelib.images import imageCanvas, supported_img_types
 import subprocess
@@ -14,6 +15,10 @@ def currentTime():
 
 def updateFileList():
     global currentPathString
+    
+    # Clear fileListBox
+    fileListBox.delete(0, tk.END)
+
     fileList = os.listdir()
 
     # Directories first
@@ -41,7 +46,7 @@ def navigateDirectory(pathString=None):
             print(f"[{currentTime()}] Changing directory to: {pathString}")
 
             # Refresh content list
-            fileListBox.delete(0, tk.END)
+            #fileListBox.delete(0, tk.END)
             updateFileList()
             pathEntry.delete(0, tk.END)
             pathEntry.insert(0, currentPathString)
@@ -101,6 +106,17 @@ def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStrin
         else:
             imagePreviewFrame.forget()
             imagePreviewCanvas.delete("all")
+
+def fileActionDelete():
+    global currentPathString
+    fileName = os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))
+    deleteQ = messagebox.askyesno("Deletion Warning", f"Delete {fileName}?")
+
+    if deleteQ == True:
+        os.remove(fileName)
+        print(f"Removed file")
+        updateFileList()
+
 if __name__ == "__main__":
 
     # Configuration & Initialization
@@ -227,11 +243,14 @@ if __name__ == "__main__":
     fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
     fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
+    pathEntry.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     # Listbox Cursor Movement
     # HOME for the first item
     # END for the last item
     fileListBox.bind("<Home>", lambda event: fileListBox.select_clear(0, tk.END) or fileListBox.selection_set(0))
     fileListBox.bind("<End>", lambda event: fileListBox.select_clear(0, tk.END) or fileListBox.selection_set(tk.END))
+    # File Actions
+    fileListBox.bind("<Delete>", lambda event: fileActionDelete())
 
 
     mainWin.mainloop()
