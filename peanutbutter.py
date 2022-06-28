@@ -115,7 +115,7 @@ def autoCompletePath():
     possibilities = [folder for folder in folders if re.search("^" + os.path.basename(pathEntry.get()), folder)]
     if len(possibilities) == 1:
         pathEntry.delete(0, tk.END)
-        pathEntry.insert(0, os.path.join(currentEntryDir, possibilities[0]))
+        pathEntry.insert(0, os.path.join(currentEntryDir, possibilities[0],""))
         print(f"[{currentTime()}] Autocompletion")
     return "break"      # For disabling highlight of pathEntry
 
