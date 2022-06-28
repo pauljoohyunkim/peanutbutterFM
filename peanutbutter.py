@@ -4,7 +4,7 @@ import configparser
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
-from filelib.images import imageCanvas, supported_img_types
+from filelib.images import imageCanvas, supported_img_types, simpleTkImage
 import subprocess
 
 currentPathString = os.getcwd()
@@ -136,6 +136,8 @@ if __name__ == "__main__":
     mainWin.title("Peanut Butter FM")
     mainWin.geometry(windowSize)
     mainWin.configure(bg=bgColor)
+    icon = simpleTkImage("/home/pbjk/Documents/Programming/peanutbutterFM/peanutbutter.jpg")
+    mainWin.wm_iconphoto(False, icon)
     
     # Menu Bar
     menubar = tk.Menu(mainWin)
