@@ -1,6 +1,6 @@
 from PIL import ImageTk, Image
 
-supported_img_types = (".png",".jpg",".jpeg")
+supported_img_types = (".png",".jpg",".jpeg", ".bmp", ".gif")
 #imageCanvas = lambda imagePath: ImageTk.PhotoImage(Image.open(imagePath))
 
 # imagePath: path to image

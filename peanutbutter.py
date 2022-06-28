@@ -72,6 +72,9 @@ def navigateDirectory(pathString=None):
         # Rewrite the path
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, currentPathString)
+    
+    # If a file is already selected, keep the selection.
+    # Otherwise, force the selection onto the first item.
     try:
         fileListBox.selection_get()
     except:
@@ -82,11 +85,13 @@ def upDirectory():
     pathString = os.path.dirname(currentPathString)
     os.chdir(pathString)
     currentPathString = pathString
-    print(f"[{currentTime()}] Changing directory tg: {pathString}")
+    print(f"[{currentTime()}] Changing directory to: {pathString}")
 
     # Refresh content list
     fileListBox.delete(0, tk.END)
     updateFileList()
+
+    # Update pathEntry text
     pathEntry.delete(0, tk.END)
     pathEntry.insert(0, currentPathString)
 
