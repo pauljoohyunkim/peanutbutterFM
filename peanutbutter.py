@@ -204,9 +204,9 @@ if __name__ == "__main__":
     imagePreviewCanvas = tk.Canvas(master=imagePreviewFrame, width=imagePreviewWidth, height=imagePreviewHeight, bg=bgColor)
     imagePreviewCanvas.pack()
 
-    previewImage = imageCanvas("PNG_Test.png", (imagePreviewHeight, imagePreviewWidth))
-    imageContainer = imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
-    imagePreviewFrame.pack()
+    #previewImage = imageCanvas("PNG_Test.png", (imagePreviewHeight, imagePreviewWidth))
+    #imageContainer = imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
+    #imagePreviewFrame.pack()
 
     # Bindings
 
