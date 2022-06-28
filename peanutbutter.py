@@ -109,14 +109,18 @@ def property_summary():
         fileLastModifiedStringVar.set(f"Last Modified: {modifiedTime}")
         fileCreationStringVar.set(f"Created: {creationTime}")
         osStatStringVar.set(f"Raw File Stat: {stat_result}")
-        if fullFilename.endswith(supported_img_types):
-            imagePreviewFrame.pack()
-            imagePreviewCanvas.delete("all")
-            previewImage = imageCanvas(fullFilename, (imagePreviewHeight, imagePreviewWidth))
-            imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
-        else:
-            imagePreviewFrame.forget()
-            imagePreviewCanvas.delete("all")
+        imagePreview(fullFilename)
+
+def imagePreview(fullFilename):
+    global previewImage
+    if fullFilename.endswith(supported_img_types):
+        imagePreviewFrame.pack()
+        imagePreviewCanvas.delete("all")
+        previewImage = imageCanvas(fullFilename, (imagePreviewHeight, imagePreviewWidth))
+        imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
+    else:
+        imagePreviewFrame.forget()
+        imagePreviewCanvas.delete("all")
 
 def autoCompletePath():
     currentEntryDir = os.path.dirname(pathEntry.get())
