@@ -86,12 +86,11 @@ def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStrin
         modifiedStringVar.set(f"Last Modified: {modifiedTime}")
         createdStringVar.set(f"Created: {creationTime}")
         osStatStringVar.set(f"Raw File Stat: {stat_result}")
-        #imagePreviewCanvas.delete("all")
         if fullFilename.endswith(supported_img_types):
             imagePreviewFrame.pack()
             imagePreviewCanvas.delete("all")
-            previewImage = imageCanvas(fullFilename)
-            imagePreviewCanvas.create_image(10,10,anchor=tk.NW,image = previewImage)
+            previewImage = imageCanvas(fullFilename, (imagePreviewHeight, imagePreviewWidth))
+            imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
         else:
             imagePreviewFrame.forget()
             imagePreviewCanvas.delete("all")
@@ -202,11 +201,11 @@ if __name__ == "__main__":
     imagePreviewLabel = tk.Label(master=imagePreviewFrame, text="Image Preview", fg=fgColor, bg=bgColor)
     imagePreviewLabel["font"] = "bold"
     imagePreviewLabel.pack()
-    imagePreviewCanvas = tk.Canvas(master=imagePreviewFrame, width=imagePreviewWidth, height=imagePreviewHeight)    
+    imagePreviewCanvas = tk.Canvas(master=imagePreviewFrame, width=imagePreviewWidth, height=imagePreviewHeight, bg=bgColor)
     imagePreviewCanvas.pack()
 
-    previewImage = imageCanvas("PNG_Test.png")
-    imageContainer = imagePreviewCanvas.create_image(10, 10, anchor=tk.NW, image=previewImage)
+    previewImage = imageCanvas("PNG_Test.png", (imagePreviewHeight, imagePreviewWidth))
+    imageContainer = imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
     imagePreviewFrame.pack()
 
     # Bindings
