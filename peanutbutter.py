@@ -6,6 +6,8 @@ from datetime import datetime
 from filelib.images import imageCanvas, supported_img_types
 import subprocess
 
+currentPathString = os.getcwd()
+
 def currentTime():
     now = datetime.now()
     return now.strftime("%Y.%m.%d %H:%M:%S")    
@@ -25,7 +27,6 @@ def updateFileList():
         if os.path.isfile(file):
             fileListBox.insert(tk.END, file)
 
-currentPathString = os.getcwd()
 
 def navigateDirectory(pathString=None):
     global currentPathString
@@ -63,7 +64,7 @@ def upDirectory():
     pathString = os.path.dirname(currentPathString)
     os.chdir(pathString)
     currentPathString = pathString
-    print(f"[{currentTime()}] Changing directory to: {pathString}")
+    print(f"[{currentTime()}] Changing directory tg: {pathString}")
 
     # Refresh content list
     fileListBox.delete(0, tk.END)
@@ -87,11 +88,12 @@ def property_summary(currentPathString, fileListBox,sizeStringVar, modifiedStrin
         osStatStringVar.set(f"Raw File Stat: {stat_result}")
         #imagePreviewCanvas.delete("all")
         if fullFilename.endswith(supported_img_types):
-            print("It is a supported image")
+            imagePreviewFrame.pack()
             imagePreviewCanvas.delete("all")
             previewImage = imageCanvas(fullFilename)
             imagePreviewCanvas.create_image(10,10,anchor=tk.NW,image = previewImage)
         else:
+            imagePreviewFrame.forget()
             imagePreviewCanvas.delete("all")
 if __name__ == "__main__":
 
@@ -107,14 +109,11 @@ if __name__ == "__main__":
     folderColor = config["THEME"]["folder"]
     openFileMethod = config["ACTION"]["open"]
 
-
     # Main Window
     mainWin = tk.Tk()
     mainWin.title("Peanut Butter FM")
     mainWin.geometry(windowSize)
     mainWin.configure(bg=bgColor)
-    
-    previewImage = imageCanvas("PNG_Test.png")
     
     # Menu Bar
     menubar = tk.Menu(mainWin)
@@ -179,6 +178,7 @@ if __name__ == "__main__":
 
     propertiesFrame = tk.Frame(master=mainWin, bg=bgColor)
     propertiesLabel = tk.Label(master=propertiesFrame, text="Properties: ", fg=fgColor, bg=bgColor)
+    propertiesLabel["font"] = "bold"
     fileSizeLabel = tk.Label(master=propertiesFrame, textvariable=fileSizeStringVar, fg=fgColor, bg=bgColor)
     fileLastModifiedLabel = tk.Label(master=propertiesFrame, textvariable=fileLastModifiedStringVar, fg=fgColor, bg=bgColor)
     fileCreationLabel = tk.Label(master=propertiesFrame, textvariable=fileCreationStringVar, fg=fgColor, bg=bgColor)
@@ -199,7 +199,8 @@ if __name__ == "__main__":
 
     # Image Preview Frame
     imagePreviewFrame = tk.Frame(master=mainWin, bg=bgColor)
-    imagePreviewLabel = tk.Label(master=imagePreviewFrame, text="Preview", fg=fgColor, bg=bgColor)
+    imagePreviewLabel = tk.Label(master=imagePreviewFrame, text="Image Preview", fg=fgColor, bg=bgColor)
+    imagePreviewLabel["font"] = "bold"
     imagePreviewLabel.pack()
     imagePreviewCanvas = tk.Canvas(master=imagePreviewFrame, width=imagePreviewWidth, height=imagePreviewHeight)    
     imagePreviewCanvas.pack()
