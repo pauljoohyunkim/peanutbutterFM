@@ -8,6 +8,7 @@ from datetime import datetime
 from filelib.hasher import sha256sum, md5sum
 from filelib.images import imageCanvas, supported_img_types, simpleTkImage
 import subprocess
+import shutil
 
 currentPathString = os.getcwd()
 
@@ -128,8 +129,12 @@ def fileActionDelete():
     deleteQ = messagebox.askyesno("Deletion Warning", f"Delete {fileName}?")
 
     if deleteQ == True:
-        os.remove(fileName)
-        print(f"Removed file")
+        if os.path.isdir(fileName):
+            shutil.rmtree(fileName)
+            print(f"[{currentTime()}] Deleted folder {fileName}")
+        elif os.path.isfile(fileName):
+            os.remove(fileName)
+            print(f"[{currentTime()}] Deleted file {fileName}")
         updateFileList()
 
 def showHash(hashtype):
