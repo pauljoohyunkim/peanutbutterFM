@@ -12,6 +12,11 @@ import shutil
 
 currentPathString = os.getcwd()
 
+# Dictionary of aliases of names of folders and files. This might be useful for encryption.
+# By default, this will simply be an identity map, but this can be changed depending on the need.
+# listingEngine[alias] = realName
+listingEngine = {}
+
 def currentTime():
     now = datetime.now()
     return now.strftime("%Y.%m.%d %H:%M:%S")    
