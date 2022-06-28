@@ -115,9 +115,8 @@ def autoCompletePath():
     if len(possibilities) == 1:
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, os.path.join(currentPathString, possibilities[0]))
-       # navigatorFrame.focus()
-       # pathEntry.focus()
         print(f"[{currentTime()}] Autocompletion")
+    return "break"      # For disabling highlight of pathEntry
 
 
 
@@ -176,12 +175,13 @@ if __name__ == "__main__":
     navigatorFrame = tk.Frame(master=mainWin, bg=bgColor)
     locationLabel = tk.Label(master=navigatorFrame, text="Path: ", fg=fgColor, bg=bgColor)
     pathEntry = tk.Entry(master=navigatorFrame, width=pathEntryWidth, fg=fgColor, bg = bgColor)
-    goButton = tk.Button(master=navigatorFrame, text="Navigate", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory())
-    upFolderButton = tk.Button(master=navigatorFrame, text="Up Folder", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory(os.path.dirname(currentPathString)))
+    goButton = tk.Button(master=navigatorFrame, text="Navigate", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory(), takefocus=False)
+    upFolderButton = tk.Button(master=navigatorFrame, text="Up Folder", fg=fgColor, bg=bgColor, command=lambda: navigateDirectory(os.path.dirname(currentPathString)), takefocus=False)
 
     locationLabel.grid(row=0,column=0)
     pathEntry.grid(row=0,column=1)
     pathEntry.insert(0, os.getcwd())
+    pathEntry.focus()
     goButton.grid(row=0,column=2)
     upFolderButton.grid(row=0, column=3)
     #navigatorFrame.place(x=20, y=20)
@@ -189,9 +189,9 @@ if __name__ == "__main__":
     
     # Content Frame: Shows the files.
     contentFrame = tk.Frame(master=mainWin)
-    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth, fg=fgColor, bg=bgColor)
+    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth, fg=fgColor, bg=bgColor, takefocus=False)
     updateFileList()
-    fileListScrollbar = tk.Scrollbar(master=contentFrame)
+    fileListScrollbar = tk.Scrollbar(master=contentFrame, takefocus=False)
     fileListBox.config(yscrollcommand = fileListScrollbar.set)
     fileListScrollbar.config(command = fileListBox.yview)
     fileListScrollbar.pack()
@@ -264,8 +264,8 @@ if __name__ == "__main__":
     # Listbox Cursor Movement
     # HOME for the first item
     # END for the last item
-    fileListBox.bind("<Home>", lambda event: fileListBox.select_clear(0, tk.END) == fileListBox.selection_set(0))
-    fileListBox.bind("<End>", lambda event: fileListBox.select_clear(0, tk.END) == fileListBox.selection_set(tk.END))
+    fileListBox.bind("<Home>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(0)])
+    fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
 
