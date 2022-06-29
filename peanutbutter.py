@@ -5,7 +5,7 @@ import re
 import configparser
 import time
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import TclError, messagebox
 from datetime import datetime
 from filelib.hasher import sha256sum, md5sum
 from filelib.images import imageCanvas, supported_img_types, simpleTkImage
@@ -165,16 +165,19 @@ def fileActionDelete():
 
 def showHash(hashtype):
     global currentPathString
-    fileName = os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))
-    
-    if os.path.isfile(fileName) == False:
-        messagebox.showerror(f"SHA256: {fileName}", f"{fileName} is not a file.")
-        return 1
-    
-    if hashtype == "sha256":
-        messagebox.showinfo(f"SHA256: {fileName}", f"{sha256sum(fileName)}")
-    if hashtype == "md5":
-        messagebox.showinfo(f"MD5: {fileName}", f"{md5sum(fileName)}")
+    try:
+        fileName = os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))
+        
+        if os.path.isfile(fileName) == False:
+            messagebox.showerror(f"SHA256: {fileName}", f"{fileName} is not a file.")
+            return 1
+        
+        if hashtype == "sha256":
+            messagebox.showinfo(f"SHA256: {fileName}", f"{sha256sum(fileName)}")
+        if hashtype == "md5":
+            messagebox.showinfo(f"MD5: {fileName}", f"{md5sum(fileName)}")
+    except TclError:
+        messagebox.showerror("Hash", "Cannot show hash. Did you select a file?")
 
 def onClosing():
     global restoreSession
@@ -189,6 +192,8 @@ def onClosing():
 def setFavorite(index):
     favoritesList[index] = currentListingEngine.eval(currentPathString)
     favoritesMenu.entryconfig(index, label=currentListingEngine.eval(currentPathString))
+
+    print(f"[{currentTime()}] Set {currentListingEngine.eval(currentPathString)} to folder{index + 1}")
 
 
 if __name__ == "__main__":
@@ -294,7 +299,7 @@ if __name__ == "__main__":
     #imagePreviewFrame.pack()
 
     # Menu Bar
-    menubar = tk.Menu(mainWin)
+    menubar = tk.Menu(mainWin, fg=fgColor, bg=bgColor)
     # File Menu
     fileMenu = tk.Menu(menubar, tearoff=0)
     fileMenu.add_command(label="New")
