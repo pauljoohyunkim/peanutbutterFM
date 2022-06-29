@@ -195,6 +195,9 @@ def setFavorite(index):
 
     debugMessage(f"Set {currentListingEngine.eval(currentPathString)} to folder{index + 1}")
 
+def focusOnPathEntry():
+    pathEntry.focus()
+    return "break"
 
 if __name__ == "__main__":
 
@@ -358,6 +361,8 @@ if __name__ == "__main__":
     fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
     # fileListBox focused when pressing down arrow key.
     mainWin.bind("<Down>", lambda event: fileListBox.focus())
+    # pathEntry focused when tabbed from fileListBox
+    fileListBox.bind("<Tab>", lambda event: focusOnPathEntry())
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
     # Favorites (Adding to Favorite and navigation)
