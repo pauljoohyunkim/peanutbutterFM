@@ -242,7 +242,7 @@ if __name__ == "__main__":
     
     # Content Frame: Shows the files.
     contentFrame = tk.Frame(master=mainWin)
-    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth, fg=fgColor, bg=bgColor, takefocus=False)
+    fileListBox = tk.Listbox(master=contentFrame, width=pathEntryWidth, fg=fgColor, bg=bgColor, takefocus=True)
     updateFileList()
     fileListScrollbar = tk.Scrollbar(master=contentFrame, takefocus=False)
     fileListBox.config(yscrollcommand = fileListScrollbar.set)
@@ -351,6 +351,8 @@ if __name__ == "__main__":
     fileListBox.bind("<Home>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(0)])
     # END for the last item
     fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
+    # fileListBox focused when pressing down arrow key.
+    mainWin.bind("<Down>", lambda event: fileListBox.focus())
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
     # Favorites (Adding to Favorite and navigation)
