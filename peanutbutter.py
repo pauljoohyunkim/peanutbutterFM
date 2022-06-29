@@ -7,15 +7,15 @@ from tkinter import messagebox
 from datetime import datetime
 from filelib.hasher import sha256sum, md5sum
 from filelib.images import imageCanvas, supported_img_types, simpleTkImage
+# Listing Engine: Dictionary/Map of aliases of names of folders and files. This might be useful for encryption.
+# By default, this will simply be an identity map, but this can be changed depending on the need.
+# In simple term, essentially, listingEngine(realName) = alias
+from listingenginelib.listingengine import ListingMap, defaultListingEngine
 import subprocess
 import shutil
 
 currentPathString = os.getcwd()
-
-# Dictionary of aliases of names of folders and files. This might be useful for encryption.
-# By default, this will simply be an identity map, but this can be changed depending on the need.
-# listingEngine[alias] = realName
-listingEngine = {}
+currentListingEngine = defaultListingEngine
 
 def currentTime():
     now = datetime.now()
@@ -32,13 +32,13 @@ def updateFileList():
     # Directories first
     for file in fileList:
         if os.path.isdir(file):
-            fileListBox.insert(tk.END, file)
+            fileListBox.insert(tk.END, currentListingEngine.eval(file))
             fileListBox.itemconfig(tk.END, {"fg": folderColor})
     
     # Then files
     for file in fileList:
         if os.path.isfile(file):
-            fileListBox.insert(tk.END, file)
+            fileListBox.insert(tk.END, currentListingEngine.eval(file))
 
 
 def navigateDirectory(pathString=None):
@@ -104,7 +104,7 @@ def property_summary():
     global previewImage
     cs = fileListBox.curselection()
     if len(cs) == 1:
-        filename = fileListBox.get(cs[0])
+        filename = currentListingEngine.inveval(fileListBox.get(cs[0]))
         fullFilename = os.path.join(currentPathString, filename)
         size = os.path.getsize(fullFilename)
         modifiedTime = os.path.getmtime(fullFilename)
@@ -138,7 +138,7 @@ def autoCompletePath():
 
 def fileActionDelete():
     global currentPathString
-    fileName = os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))
+    fileName = os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))
     deleteQ = messagebox.askyesno("Deletion Warning", f"Delete {fileName}?")
 
     if deleteQ == True:
@@ -152,7 +152,7 @@ def fileActionDelete():
 
 def showHash(hashtype):
     global currentPathString
-    fileName = os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))
+    fileName = os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))
     
     if os.path.isfile(fileName) == False:
         messagebox.showerror(f"SHA256: {fileName}", f"{fileName} is not a file.")
@@ -283,8 +283,8 @@ if __name__ == "__main__":
     # Navigate directory / Open file
     # Double click and Enter for navigation
     # Escape for upper folder
-    fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
-    fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
+    fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))))
+    fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))))
     fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
     pathEntry.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
