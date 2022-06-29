@@ -180,6 +180,8 @@ def onClosing():
     global restoreSession
     if restoreSession:
         prev["NAVIGATION"]["Folder"] = currentPathString
+        for i in range(1,10):
+            prev["FAVORITES"][f"folder{i}"] = favoritesList[i-1]
         with open(os.path.join(scriptLocation, ".session.ini"), "w") as saveSession:
             prev.write(saveSession)
     mainWin.destroy()
