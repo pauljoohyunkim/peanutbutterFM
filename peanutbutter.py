@@ -51,6 +51,9 @@ def navigateDirectory(pathString=None):
     global currentPathString
     if not pathString:
         pathString = pathEntry.get()
+    
+    if pathString == ".":
+        pathString = currentPathString
 
     # If Directory
     if os.path.isdir(pathString):
@@ -127,7 +130,7 @@ def property_summary():
 
 def imagePreview(fullFilename):
     global previewImage
-    if fullFilename.endswith(supported_img_types):
+    if fullFilename.lower().endswith(supported_img_types):
         imagePreviewFrame.pack()
         imagePreviewCanvas.delete("all")
         previewImage = imageCanvas(fullFilename, (imagePreviewHeight, imagePreviewWidth))
