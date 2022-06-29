@@ -115,11 +115,11 @@ def property_summary():
     if len(cs) == 1:
         filename = currentListingEngine.inveval(fileListBox.get(cs[0]))
         fullFilename = os.path.join(currentPathString, filename)
-        size = os.path.getsize(fullFilename)
+        size = f"Size: {os.path.getsize(fullFilename)} bytes" if os.path.isfile(fullFilename) else "Size: REDACTED (Folder)"
         modifiedTime = time.ctime(os.path.getmtime(fullFilename))
         creationTime = time.ctime(os.path.getctime(fullFilename))
         stat_result = os.stat(fullFilename)
-        fileSizeStringVar.set(f"Size: {size} bytes")
+        fileSizeStringVar.set(size)
         fileLastModifiedStringVar.set(f"Last Modified: {modifiedTime}")
         fileCreationStringVar.set(f"Created: {creationTime}")
         osStatStringVar.set(f"Raw File Stat: {stat_result}")
@@ -264,6 +264,12 @@ if __name__ == "__main__":
     #contentFrame.place(x=20, y=60)
     contentFrame.pack(fill = tk.X)
 
+    # By default, select the first entry, unless it is not possible.
+    try:
+        fileListBox.selection_set(0)
+    except:
+        pass
+
     # Properties Frame: Shows properties of the file
     fileSizeStringVar = tk.StringVar()
     fileSizeStringVar.set("Size: ")
@@ -288,6 +294,12 @@ if __name__ == "__main__":
     fileCreationLabel.pack(anchor="w")
     osStatLabel.pack(anchor="w")
     propertiesFrame.pack(fill = tk.X, expand=False)
+
+    # By default, show property of the selected item if possible.
+    try:
+        property_summary()
+    except:
+        pass
 
     # Image Preview Frame
     imagePreviewFrame = tk.Frame(master=mainWin, bg=bgColor)
