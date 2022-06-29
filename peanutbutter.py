@@ -99,12 +99,16 @@ def navigateDirectory(pathString=None):
     #        pass
 
     try:
-        fileListBox.select_clear(0, tk.END)
-        fileListBox.selection_set(0)
-        property_summary()
-        #imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
+        fileListBox.selection_get()
     except:
-        pass
+        try:
+            fileListBox.select_clear(0, tk.END)
+            fileListBox.selection_set(0)
+            property_summary()
+            #imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
+        except:
+            pass
+        
 def property_summary():
     global previewImage
     cs = fileListBox.curselection()
