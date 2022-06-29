@@ -224,7 +224,9 @@ def fileSelectByFirstChar(character):
 
 def setCustomScript(index):
     debugMessage("setCustomScript")
-    pass
+    scriptName = os.path.join(currentPathString, fileListBox.selection_get())
+    customScripts[index] = currentListingEngine.eval(scriptName)
+    customScriptMenu.entryconfig(index, label=currentListingEngine.eval(scriptName) + " " * 50 + f"Alt+Numpad {index + 1}")
 
 def runCustomScript(index):
     debugMessage("runCustomScript")
