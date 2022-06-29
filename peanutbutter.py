@@ -276,7 +276,7 @@ if __name__ == "__main__":
     fileListScrollbar = tk.Scrollbar(master=contentFrame, takefocus=False)
     fileListBox.config(yscrollcommand = fileListScrollbar.set)
     fileListScrollbar.config(command = fileListBox.yview)
-    fileListScrollbar.pack()
+    fileListScrollbar.pack(side="right", fill="y", expand=False)
 
 
     fileListBox.pack(fill = tk.X)
@@ -389,9 +389,9 @@ if __name__ == "__main__":
     pathEntry.bind("<Tab>", lambda event: autoCompletePath())
     # Listbox Cursor Movement
     # HOME for the first item
-    fileListBox.bind("<Home>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(0)])
+    fileListBox.bind("<Home>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(0), fileListBox.see(0)])
     # END for the last item
-    fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
+    fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END), fileListBox.see(tk.END)])
     # fileListBox focused when pressing down arrow key.
     mainWin.bind("<Down>", lambda event: fileListBox.focus())
     # fileListBox select file that starts with certain characters
