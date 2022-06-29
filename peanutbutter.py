@@ -222,7 +222,12 @@ def fileSelectByFirstChar(character):
         except:
             debugMessage("Error in fileSelectByFirstChar function.")
 
+def setCustomScript(index):
+    debugMessage("setCustomScript")
+    pass
+
 def runCustomScript(index):
+    debugMessage("runCustomScript")
     pass
 
 if __name__ == "__main__":
@@ -377,7 +382,7 @@ if __name__ == "__main__":
     for i in range(1,10):
         def lambdaRunCustomScript(x):
             return lambda: runCustomScript(customScripts[x-1])
-        customScriptMenu.add_command(label=f"Script {i}" + " " * 50 + f"Alt+Shift+{i} to set custom script.", command = lambdaRunCustomScript(i))
+        customScriptMenu.add_command(label=f"Script {i}" + " " * 50 + f"Alt+Ctrl+Numpad {i} to set custom script.", command = lambdaRunCustomScript(i))
     menubar.add_cascade(label="Custom Scripts", menu=customScriptMenu)
     mainWin.config(menu=menubar)
 
@@ -423,16 +428,23 @@ if __name__ == "__main__":
     fileListBox.bind("<Tab>", lambda event: focusOnPathEntry())
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
-    # Favorites (Adding to Favorite and navigation)
+    # Favorites (Adding to Favorite and navigation) & Custom Scripts
+    symbol_to_num = {}
     for i in range(9):
         def lambdaSetFavorite(x):
             return lambda event: setFavorite(x-1)
         def lambdaNavigateFavorite(x):
             return lambda event: navigateDirectory(favoritesList[x-1])
+        def lambdaSetCustomScript(x):
+            return lambda event: setCustomScript(x-1)
+        def lambdaRunCustomScript(x):
+            return lambda event: runCustomScript(favoritesList[x-1])
         fileListBox.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
         pathEntry.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
         fileListBox.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
         pathEntry.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
+        fileListBox.bind(f"<Alt-Control-KeyPress-KP_{i}>", lambdaSetCustomScript(i))
+        fileListBox.bind(f"<Control-KeyPress-KP_{i}>", lambdaRunCustomScript(i))
     
 
     mainWin.mainloop()
