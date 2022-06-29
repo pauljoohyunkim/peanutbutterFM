@@ -16,6 +16,7 @@ from filelib.images import imageCanvas, supported_img_types, simpleTkImage
 from listingenginelib.listingengine import ListingMap, defaultListingEngine
 import subprocess
 import shutil
+import platform
 
 # currentPathString is in real name
 currentPathString = os.getcwd()
@@ -89,7 +90,12 @@ def navigateDirectory(pathString=None):
     # If file
     elif os.path.isfile(pathString):
         try:
-            subprocess.run([openFileMethod, pathString])
+            if platform.system().lower() == "windows":
+                os.startfile(pathString)
+            elif platform.system().lower() == "linux":
+                subprocess.run([openFileMethod, pathString])
+            elif platform.system().lower() == "darwin":
+                subprocess.run(["open", pathString])
             debugMessage(f"Opened {pathString} with default application.")
         except:
             debugMessage(f"Opening {pathString} with default application failed.")
