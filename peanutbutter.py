@@ -33,18 +33,18 @@ def updateFileList():
     # Clear fileListBox
     fileListBox.delete(0, tk.END)
 
-    fileList = os.listdir()
+    fileList = [currentListingEngine.eval(file) for file in os.listdir()]
 
     # Directories first
     for file in fileList:
-        if os.path.isdir(file):
-            fileListBox.insert(tk.END, currentListingEngine.eval(file))
+        if os.path.isdir(currentListingEngine.inveval(file)):
+            fileListBox.insert(tk.END, file)
             fileListBox.itemconfig(tk.END, {"fg": folderColor})
     
     # Then files
     for file in fileList:
-        if os.path.isfile(file):
-            fileListBox.insert(tk.END, currentListingEngine.eval(file))
+        if os.path.isfile(currentListingEngine.inveval(file)):
+            fileListBox.insert(tk.END, file)
 
 
 def navigateDirectory(pathString=None):
