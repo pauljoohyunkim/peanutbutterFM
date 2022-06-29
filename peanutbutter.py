@@ -24,6 +24,9 @@ def currentTime():
     now = datetime.now()
     return now.strftime("%Y.%m.%d %H:%M:%S")    
 
+def debugMessage(string):
+    print(f"[{currentTime()}] {string}")
+
 def updateFileList():
     global currentPathString
     
@@ -54,7 +57,7 @@ def navigateDirectory(pathString=None):
         try:
             os.chdir(pathString)
             currentPathString = pathString
-            print(f"[{currentTime()}] Changing directory to: {pathString}")
+            debugMessage(f"Changing directory to: {pathString}")
 
             # Refresh content list
             #fileListBox.delete(0, tk.END)
@@ -62,7 +65,7 @@ def navigateDirectory(pathString=None):
             pathEntry.delete(0, tk.END)
             pathEntry.insert(0, currentPathString)
         except:
-            print(f"[{currentTime()}] Changing directory to: {pathString} failed.")
+            debugMessage(f"Changing directory to: {pathString} failed.")
 
             # Rewrite the path
             pathEntry.delete(0, tk.END)
@@ -71,12 +74,12 @@ def navigateDirectory(pathString=None):
     elif os.path.isfile(pathString):
         try:
             subprocess.run([openFileMethod, pathString])
-            print(f"[{currentTime()}] Opened {pathString} with default application.")
+            debugMessage(f"Opened {pathString} with default application.")
         except:
-            print(f"[{currentTime()}] Opening {pathString} with default application failed.")
+            debugMessage(f"Opening {pathString} with default application failed.")
     
     else:
-        print(f"[{currentTime()}] Changing directory to: {pathString} failed.")
+        debugMessage(f"Changing directory to: {pathString} failed.")
         # Rewrite the path
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, currentPathString)
@@ -136,7 +139,7 @@ def autoCompletePath():
     if len(possibilities) == 1:
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, os.path.join(currentEntryDir, possibilities[0],""))
-        print(f"[{currentTime()}] Autocompletion: {os.path.join(currentEntryDir, possibilities[0])}")
+        debugMessage(f"Autocompletion: {os.path.join(currentEntryDir, possibilities[0])}")
     return "break"      # For disabling highlight of pathEntry
 
 
@@ -150,10 +153,10 @@ def fileActionDelete():
     if deleteQ == True:
         if os.path.isdir(fileName):
             shutil.rmtree(fileName)
-            print(f"[{currentTime()}] Deleted folder {fileName}")
+            debugMessage(f"Deleted folder {fileName}")
         elif os.path.isfile(fileName):
             os.remove(fileName)
-            print(f"[{currentTime()}] Deleted file {fileName}")
+            debugMessage(f"Deleted file {fileName}")
         updateFileList()
 
 def showHash(hashtype):
@@ -186,7 +189,7 @@ def setFavorite(index):
     favoritesList[index] = currentListingEngine.eval(currentPathString)
     favoritesMenu.entryconfig(index, label=currentListingEngine.eval(currentPathString))
 
-    print(f"[{currentTime()}] Set {currentListingEngine.eval(currentPathString)} to folder{index + 1}")
+    debugMessage(f"Set {currentListingEngine.eval(currentPathString)} to folder{index + 1}")
 
 
 if __name__ == "__main__":
@@ -337,6 +340,8 @@ if __name__ == "__main__":
     fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))))
     fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
+    # Refresh fileListBox
+    mainWin.bind("<F5>", lambda event: [updateFileList(), debugMessage("fileListBox refreshed.")])
     # Escape for upper folder
     fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
