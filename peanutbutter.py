@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import configparser
+import textwrap
 import time
 import tkinter as tk
 from tkinter import TclError, messagebox
@@ -366,6 +367,10 @@ if __name__ == "__main__":
             else:
                 favoritesList.append(".")
     menubar.add_cascade(label="Favorites", menu=favoritesMenu)
+    # Custom Scripts
+    customScriptMenu = tk.Menu(menubar, tearoff=0)
+    customScriptMenu.add_command(label="Script 1")
+    menubar.add_cascade(label="Custom Scripts", menu=customScriptMenu)
     mainWin.config(menu=menubar)
 
 
