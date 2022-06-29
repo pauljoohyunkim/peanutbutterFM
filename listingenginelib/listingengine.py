@@ -1,6 +1,9 @@
 revdict = lambda injectiveDictionary: {val:key for key,val in injectiveDictionary.items()}
 
 # funinvfun = (f, f^{-1})       (Function and its inverse)
+# f(real) = alias, f^(-1) (alias) = real
+# Note that none of the alias has to collide with real names, and
+# f has to be bijective with respect to real and alias.
 class ListingMap():
     def __init__(self, listingDictionary={}, funinvfun=(None,None)):
         self.listingDictionary = listingDictionary

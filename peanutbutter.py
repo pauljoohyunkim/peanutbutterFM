@@ -31,7 +31,9 @@ def currentTime():
     return now.strftime("%Y.%m.%d %H:%M:%S")    
 
 def debugMessage(string):
-    print(f"[{currentTime()}] {string}")
+    msg = f"[{currentTime()}] {string}"
+    print(msg)
+    debugStringVar.set(textwrap.fill(f"Debug: {msg}",80))
 
 def updateFileList():
     global currentPathString
@@ -187,8 +189,10 @@ def showHash(hashtype):
             return 1
         
         if hashtype == "sha256":
+            debugMessage(f"Viewed {hashtype} hash.")
             messagebox.showinfo(f"SHA256: {fileName}", f"{sha256sum(fileName)}")
         if hashtype == "md5":
+            debugMessage(f"Viewed {hashtype} hash.")
             messagebox.showinfo(f"MD5: {fileName}", f"{md5sum(fileName)}")
     except TclError:
         messagebox.showerror("Hash", "Cannot show hash. Did you select a file?")
@@ -251,6 +255,7 @@ if __name__ == "__main__":
     imagePreviewWidth = int(config["DEFAULT"]["ImagePreviewWidth"])
     imagePreviewHeight = int(config["DEFAULT"]["ImagePreviewHeight"])
     restoreSession = bool(config["DEFAULT"]["RestoreSession"])
+    debugOnScreen = bool(config["DEFAULT"]["DebugOnScreen"])
     fgColor = config["THEME"]["fg"]
     bgColor = config["THEME"]["bg"]
     folderColor = config["THEME"]["folder"]
@@ -348,6 +353,17 @@ if __name__ == "__main__":
     imagePreviewCanvas = tk.Canvas(master=imagePreviewFrame, width=imagePreviewWidth, height=imagePreviewHeight, bg=bgColor)
     imagePreviewCanvas.pack()
 
+    # Debug Frame
+    debugFrame = tk.Frame(master=mainWin, bg=bgColor)
+    debugStringVar = tk.StringVar()
+    debugStringVar.set("Debug: ")
+    debugLabel = tk.Label(textvariable=debugStringVar, justify="left", fg=fgColor, bg=bgColor)
+    
+    debugLabel.pack(side="left")
+    debugFrame.pack(fill=tk.X, expand=False, side="bottom")
+    if debugOnScreen == False:
+        debugLabel.forget()
+        debugFrame.forget()
     
 
     # Menu Bar
@@ -437,7 +453,6 @@ if __name__ == "__main__":
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
     # Favorites (Adding to Favorite and navigation) & Custom Scripts
-    symbol_to_num = {}
     for i in range(9):
         def lambdaSetFavorite(x):
             return lambda event: setFavorite(x-1)
