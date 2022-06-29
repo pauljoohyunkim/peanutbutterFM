@@ -17,8 +17,11 @@ from listingenginelib.listingengine import ListingMap, defaultListingEngine
 import subprocess
 import shutil
 
+# currentPathString is in real name
 currentPathString = os.getcwd()
 currentListingEngine = defaultListingEngine
+# currentFileList is in real name
+# favoritesList and customScripts are in alias
 currentFileList = []
 favoritesList = []
 customScripts = []
@@ -41,18 +44,20 @@ def updateFileList():
     currentFileList = []
     # Directories first
     for file in filelist:
-        if os.path.isdir(currentListingEngine.inveval(file)):
+        realFile = currentListingEngine.inveval(file)
+        if os.path.isdir(realFile):
             fileListBox.insert(tk.END, file)
             fileListBox.itemconfig(tk.END, {"fg": folderColor})
-            currentFileList.append(file)
+            currentFileList.append(realFile)
     
     # Then files
     for file in filelist:
+        realFile = currentListingEngine.inveval(file)
         if os.path.isfile(currentListingEngine.inveval(file)):
             fileListBox.insert(tk.END, file)
-            currentFileList.append(file)
+            currentFileList.append(realFile)
 
-
+# Input real filename
 def navigateDirectory(pathString=None):
     global currentPathString
     if not pathString:
@@ -350,7 +355,7 @@ if __name__ == "__main__":
     # File Menu
     fileMenu = tk.Menu(menubar, tearoff=0)
     fileMenu.add_command(label="New")
-    fileMenu.add_command(label="Open", command=lambda: navigateDirectory(os.path.join(currentPathString, fileListBox.selection_get())))
+    fileMenu.add_command(label="Open", command=lambda: navigateDirectory(currentListingEngine.inveval(os.path.join(currentPathString, fileListBox.selection_get()))))
     fileMenu.add_command(label="Properties")
     fileMenu.add_separator()
     fileMenu.add_command(label="Recent Files")
@@ -367,7 +372,7 @@ if __name__ == "__main__":
     #favoritesMenu.add_command(label="Folder 1", command=lambda: navigateDirectory("/"))
     for i in range(1,10):
         def lambdaNavigateFavorites(x):
-            return lambda: navigateDirectory(favoritesList[x-1])
+            return lambda: navigateDirectory(currentListingEngine.inveval(favoritesList[x-1]))
         favoritesMenu.add_command(label=f"Folder {i}" + " " * 50 + f"Alt+Ctrl+{i} to set favorite.", command = lambdaNavigateFavorites(i))
     
     # Restore favorites
@@ -375,7 +380,7 @@ if __name__ == "__main__":
         for i in range(9):
             if prev["FAVORITES"][f"folder{i+1}"] != ".":
                 favoritesMenu.entryconfig(i, label=prev["FAVORITES"][f"folder{i+1}"] + " " * 50 + f"Alt+{i+1}")
-                favoritesList.append(prev["FAVORITES"][f"folder{i+1}"])
+                favoritesList.append(currentListingEngine.eval(prev["FAVORITES"][f"folder{i+1}"]))
             else:
                 favoritesList.append(".")
     menubar.add_cascade(label="Favorites", menu=favoritesMenu)
@@ -393,7 +398,7 @@ if __name__ == "__main__":
     if restoreSession:
         for i in range(9):
             if prev["CUSTOMSCRIPTS"][f"script{i+1}"] != ".":
-                customScripts.append(prev["CUSTOMSCRIPTS"][f"folder{i+1}"])
+                customScripts.append(currentListingEngine(prev["CUSTOMSCRIPTS"][f"folder{i+1}"]))
             else:
                 customScripts.append(".")
 
@@ -405,9 +410,9 @@ if __name__ == "__main__":
     fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary())
     # Navigate directory / Open file
     # Double click and Enter for navigation
-    fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))))
-    fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))))
-    pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
+    fileListBox.bind("<Double-1>", lambda event: navigateDirectory(currentListingEngine.inveval(os.path.join(currentPathString, fileListBox.selection_get()))))
+    fileListBox.bind("<Return>", lambda event: navigateDirectory(currentListingEngine.inveval(os.path.join(currentPathString, fileListBox.selection_get()))))
+    pathEntry.bind("<Return>", lambda event: navigateDirectory(currentListingEngine.inveval(pathEntry.get())))
     # Refresh fileListBox
     mainWin.bind("<F5>", lambda event: [updateFileList(), debugMessage("fileListBox refreshed.")])
     # Escape for upper folder
@@ -437,7 +442,7 @@ if __name__ == "__main__":
         def lambdaSetFavorite(x):
             return lambda event: setFavorite(x-1)
         def lambdaNavigateFavorite(x):
-            return lambda event: navigateDirectory(favoritesList[x-1])
+            return lambda event: navigateDirectory(currentListingEngine(favoritesList[x-1]))
         def lambdaSetCustomScript(x):
             return lambda event: setCustomScript(x-1)
         def lambdaRunCustomScript(x):
