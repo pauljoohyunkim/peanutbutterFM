@@ -77,13 +77,13 @@ def navigateDirectory(pathString=None):
             #fileListBox.delete(0, tk.END)
             updateFileList()
             pathEntry.delete(0, tk.END)
-            pathEntry.insert(0, currentPathString)
+            pathEntry.insert(0, currentListingEngine.eval(currentPathString))
         except:
             debugMessage(f"Changing directory to: {pathString} failed.")
 
             # Rewrite the path
             pathEntry.delete(0, tk.END)
-            pathEntry.insert(0, currentPathString)
+            pathEntry.insert(0, currentListingEngine.eval(currentPathString))
     # If file
     elif os.path.isfile(pathString):
         try:
@@ -96,7 +96,7 @@ def navigateDirectory(pathString=None):
         debugMessage(f"Changing directory to: {pathString} failed.")
         # Rewrite the path
         pathEntry.delete(0, tk.END)
-        pathEntry.insert(0, currentPathString)
+        pathEntry.insert(0, currentListingEngine.eval(currentPathString))
     
     # If a file is already selected, keep the selection.
     # Otherwise, force the selection onto the first item.
@@ -228,10 +228,10 @@ def fileSelectByFirstChar(character):
             debugMessage("Error in fileSelectByFirstChar function.")
 
 def setCustomScript(index):
-    scriptName = os.path.join(currentPathString, fileListBox.selection_get())
-    customScripts[index] = currentListingEngine.eval(scriptName)
-    customScriptMenu.entryconfig(index, label=currentListingEngine.eval(scriptName) + " " * 50 + f"Ctrl+Numpad {index + 1}")
-    debugMessage(f"Set {currentListingEngine.eval(scriptName)} to script{index+1}")
+    realScriptName = os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))
+    customScripts[index] = currentListingEngine.eval(realScriptName)
+    customScriptMenu.entryconfig(index, label=currentListingEngine.eval(realScriptName) + " " * 50 + f"Ctrl+Numpad {index + 1}")
+    debugMessage(f"Set {currentListingEngine.eval(realScriptName)} to script{index+1}")
 
 def runCustomScript(index):
     subprocess.run([currentListingEngine.inveval(customScripts[index])])
@@ -280,7 +280,7 @@ if __name__ == "__main__":
 
     locationLabel.grid(row=0,column=0)
     pathEntry.grid(row=0,column=1)
-    pathEntry.insert(0, currentPathString)
+    pathEntry.insert(0, currentListingEngine.eval(currentPathString))
     pathEntry.focus()
     goButton.grid(row=0,column=2)
     upFolderButton.grid(row=0, column=3)
