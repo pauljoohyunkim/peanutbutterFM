@@ -85,16 +85,23 @@ def navigateDirectory(pathString=None):
     # Otherwise, force the selection onto the first item.
 
     # If a file does not exist in a folder, do nothing.
-    try:
-        imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
-    except:
-        try:
-            fileListBox.select_clear(0, tk.END)
-            fileListBox.selection_set(0)
-            imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
-        except:
-            pass
+    #try:
+    #    imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
+    #except:
+    #    try:
+    #        fileListBox.select_clear(0, tk.END)
+    #        fileListBox.selection_set(0)
+    #        imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
+    #    except:
+    #        pass
 
+    try:
+        fileListBox.select_clear(0, tk.END)
+        fileListBox.selection_set(0)
+        property_summary()
+        #imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
+    except:
+        pass
 def property_summary():
     global previewImage
     cs = fileListBox.curselection()
@@ -305,7 +312,7 @@ if __name__ == "__main__":
     for i in range(1,10):
         def lambdaNavigateFavorites(x):
             return lambda: navigateDirectory(favoritesList[x-1])
-        favoritesMenu.add_command(label=f"Folder {i}                Alt+Control+{i} to set favorite.", command = lambdaNavigateFavorites(i))
+        favoritesMenu.add_command(label=f"Folder {i}" + " " * 50 + f"Alt+Ctrl+{i} to set favorite.", command = lambdaNavigateFavorites(i))
     
     # Restore favorites
     if restoreSession:
@@ -351,7 +358,9 @@ if __name__ == "__main__":
         def lambdaNavigateFavorite(x):
             return lambda event: navigateDirectory(favoritesList[x-1])
         fileListBox.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
+        pathEntry.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
         fileListBox.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
+        pathEntry.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
     
 
     mainWin.mainloop()
