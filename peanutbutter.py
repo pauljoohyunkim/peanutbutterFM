@@ -223,14 +223,14 @@ def fileSelectByFirstChar(character):
             debugMessage("Error in fileSelectByFirstChar function.")
 
 def setCustomScript(index):
-    debugMessage("setCustomScript")
     scriptName = os.path.join(currentPathString, fileListBox.selection_get())
     customScripts[index] = currentListingEngine.eval(scriptName)
-    customScriptMenu.entryconfig(index, label=currentListingEngine.eval(scriptName) + " " * 50 + f"Alt+Numpad {index + 1}")
+    customScriptMenu.entryconfig(index, label=currentListingEngine.eval(scriptName) + " " * 50 + f"Ctrl+Numpad {index + 1}")
+    debugMessage(f"Set {currentListingEngine.eval(scriptName)} to script{index+1}")
 
 def runCustomScript(index):
-    debugMessage("runCustomScript")
-    pass
+    subprocess.run([currentListingEngine.inveval(customScripts[index])])
+    debugMessage(f"Running {customScripts[index]}")
 
 if __name__ == "__main__":
 
@@ -440,7 +440,7 @@ if __name__ == "__main__":
         def lambdaSetCustomScript(x):
             return lambda event: setCustomScript(x-1)
         def lambdaRunCustomScript(x):
-            return lambda event: runCustomScript(favoritesList[x-1])
+            return lambda event: runCustomScript(x-1)
         fileListBox.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
         pathEntry.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
         fileListBox.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
