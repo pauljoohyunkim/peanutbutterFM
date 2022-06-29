@@ -83,12 +83,17 @@ def navigateDirectory(pathString=None):
     
     # If a file is already selected, keep the selection.
     # Otherwise, force the selection onto the first item.
+
+    # If a file does not exist in a folder, do nothing.
     try:
         imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
     except:
-        fileListBox.select_clear(0, tk.END)
-        fileListBox.selection_set(0)
-        imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
+        try:
+            fileListBox.select_clear(0, tk.END)
+            fileListBox.selection_set(0)
+            imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
+        except:
+            pass
 #def upDirectory():
     #global currentPathString
     #pathString = os.path.dirname(currentPathString)
@@ -134,11 +139,11 @@ def imagePreview(fullFilename):
 def autoCompletePath():
     currentEntryDir = os.path.dirname(pathEntry.get())
     folders = [folder for folder in os.listdir(currentEntryDir) if os.path.isdir(os.path.join(currentEntryDir,folder))]
-    possibilities = [folder for folder in folders if re.search("^" + os.path.basename(pathEntry.get()), folder)]
+    possibilities = [folder for folder in folders if re.search("^" + os.path.basename(currentListingEngine.inveval(pathEntry.get())), folder)]
     if len(possibilities) == 1:
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, os.path.join(currentEntryDir, possibilities[0],""))
-        print(f"[{currentTime()}] Autocompletion")
+        print(f"[{currentTime()}] Autocompletion: {os.path.join(currentEntryDir, possibilities[0])}")
     return "break"      # For disabling highlight of pathEntry
 
 
@@ -308,7 +313,7 @@ if __name__ == "__main__":
     #favoritesMenu.add_command(label="Folder 1", command=lambda: navigateDirectory("/"))
     for i in range(1,10):
         def lambdaNavigateFavorites(x):
-            return lambda: navigateDirectory(currentListingEngine.inveval(favoritesMenu.entrycget(x-1, "label")))
+            return lambda: navigateDirectory(favoritesList[x-1])
         favoritesMenu.add_command(label=f"Folder {i}                Alt+Control+{i} to set favorite.", command = lambdaNavigateFavorites(i))
     
     # Restore favorites
@@ -346,12 +351,15 @@ if __name__ == "__main__":
     fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
-    # Favorites (Adding to Favorite)
+    # Favorites (Adding to Favorite and navigation)
     for i in range(9):
         def lambdaSetFavorite(x):
             return lambda event: setFavorite(x-1)
+        def lambdaNavigateFavorite(x):
+            return lambda event: navigateDirectory(favoritesList[x-1])
         fileListBox.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
-
+        fileListBox.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
+    
 
     mainWin.mainloop()
 
