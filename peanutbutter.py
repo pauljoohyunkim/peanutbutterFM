@@ -215,6 +215,7 @@ def fileSelectByFirstChar(character):
                 if currentFileList[index] in fileStartsWithCharList:
                     fileListBox.selection_clear(0, tk.END)
                     fileListBox.selection_set(index)
+                    fileListBox.see(index)
                     break
         except:
             debugMessage("Error in fileSelectByFirstChar function.")
