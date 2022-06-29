@@ -338,18 +338,18 @@ if __name__ == "__main__":
     fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary())
     # Navigate directory / Open file
     # Double click and Enter for navigation
-    # Escape for upper folder
     fileListBox.bind("<Double-1>", lambda event: navigateDirectory(os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))))
     fileListBox.bind("<Return>", lambda event: navigateDirectory(os.path.join(currentPathString, currentListingEngine.inveval(fileListBox.selection_get()))))
-    fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Return>", lambda event: navigateDirectory(pathEntry.get()))
+    # Escape for upper folder
+    fileListBox.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     pathEntry.bind("<Escape>", lambda event: navigateDirectory(os.path.dirname(currentPathString)))
     # Autocompletion for Folders
     pathEntry.bind("<Tab>", lambda event: autoCompletePath())
     # Listbox Cursor Movement
     # HOME for the first item
-    # END for the last item
     fileListBox.bind("<Home>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(0)])
+    # END for the last item
     fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
