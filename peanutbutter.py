@@ -277,7 +277,12 @@ if __name__ == "__main__":
     hashMenu.add_command(label="MD5", command=lambda: showHash("md5"))
     hashMenu.add_command(label="SHA-256", command=lambda: showHash("sha256"))
     menubar.add_cascade(label="Hash", menu=hashMenu)
+    # Favorites Menu
+    favoritesMenu = tk.Menu(menubar, tearoff=0)
+    favoritesMenu.add_command(label="Folder 1", command=lambda: navigateDirectory("/"))
+    menubar.add_cascade(label="Favorites", menu=favoritesMenu)
     mainWin.config(menu=menubar)
+
 
 
     # Bindings
