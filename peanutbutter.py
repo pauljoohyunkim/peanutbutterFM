@@ -198,7 +198,7 @@ def onClosing():
     if restoreSession:
         prev["NAVIGATION"]["Folder"] = currentPathString
         for i in range(1,10):
-            prev["FAVORITES"][f"folder{i}"] = favoritesList[i-1]
+            prev["FAVORITES"][f"folder{i}"] = currentListingEngine.eval(favoritesList[i-1])
         with open(os.path.join(scriptLocation, ".session.ini"), "w") as saveSession:
             prev.write(saveSession)
     mainWin.destroy()
@@ -379,7 +379,7 @@ if __name__ == "__main__":
     if restoreSession:
         for i in range(9):
             if prev["FAVORITES"][f"folder{i+1}"] != ".":
-                favoritesMenu.entryconfig(i, label=prev["FAVORITES"][f"folder{i+1}"] + " " * 50 + f"Alt+{i+1}")
+                favoritesMenu.entryconfig(i, label=currentListingEngine.eval(prev["FAVORITES"][f"folder{i+1}"]) + " " * 50 + f"Alt+{i+1}")
                 favoritesList.append(currentListingEngine.eval(prev["FAVORITES"][f"folder{i+1}"]))
             else:
                 favoritesList.append(".")
@@ -442,7 +442,7 @@ if __name__ == "__main__":
         def lambdaSetFavorite(x):
             return lambda event: setFavorite(x-1)
         def lambdaNavigateFavorite(x):
-            return lambda event: navigateDirectory(currentListingEngine(favoritesList[x-1]))
+            return lambda event: navigateDirectory(currentListingEngine.inveval(favoritesList[x-1]))
         def lambdaSetCustomScript(x):
             return lambda event: setCustomScript(x-1)
         def lambdaRunCustomScript(x):
