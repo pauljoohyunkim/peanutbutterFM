@@ -18,6 +18,7 @@ import shutil
 
 currentPathString = os.getcwd()
 currentListingEngine = defaultListingEngine
+currentFileList = []
 favoritesList = []
 
 def currentTime():
@@ -29,22 +30,25 @@ def debugMessage(string):
 
 def updateFileList():
     global currentPathString
-    
+    global currentFileList    
     # Clear fileListBox
     fileListBox.delete(0, tk.END)
 
-    fileList = [currentListingEngine.eval(file) for file in os.listdir()]
+    filelist = [currentListingEngine.eval(file) for file in os.listdir()]
 
+    currentFileList = []
     # Directories first
-    for file in fileList:
+    for file in filelist:
         if os.path.isdir(currentListingEngine.inveval(file)):
             fileListBox.insert(tk.END, file)
             fileListBox.itemconfig(tk.END, {"fg": folderColor})
+            currentFileList.append(file)
     
     # Then files
-    for file in fileList:
+    for file in filelist:
         if os.path.isfile(currentListingEngine.inveval(file)):
             fileListBox.insert(tk.END, file)
+            currentFileList.append(file)
 
 
 def navigateDirectory(pathString=None):
@@ -201,6 +205,19 @@ def setFavorite(index):
 def focusOnPathEntry():
     pathEntry.focus()
     return "break"
+
+def fileSelectByFirstChar(character):
+    fileStartsWithCharList = [file for file in currentFileList if file.startswith(character)]
+    currentSelectionIndex = currentFileList.index(fileListBox.selection_get())
+    if fileStartsWithCharList:
+        try:
+            for index in range(currentSelectionIndex+1, len(currentFileList)):
+                if currentFileList[index] in fileStartsWithCharList:
+                    fileListBox.selection_clear(0, tk.END)
+                    fileListBox.selection_set(index)
+                    break
+        except:
+            debugMessage("Error in fileSelectByFirstChar function.")
 
 if __name__ == "__main__":
 
@@ -376,6 +393,11 @@ if __name__ == "__main__":
     fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
     # fileListBox focused when pressing down arrow key.
     mainWin.bind("<Down>", lambda event: fileListBox.focus())
+    # fileListBox select file that starts with certain characters
+    for char in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789":
+        def lambdaFileSelectByFirstChar(character):
+            return lambda event: fileSelectByFirstChar(character)
+        fileListBox.bind(f"<KeyPress-{char}>", lambdaFileSelectByFirstChar(char))
     # pathEntry focused when tabbed from fileListBox
     fileListBox.bind("<Tab>", lambda event: focusOnPathEntry())
     # File Actions
