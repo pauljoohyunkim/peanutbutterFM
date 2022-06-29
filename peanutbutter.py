@@ -187,7 +187,7 @@ def onClosing():
 
 def setFavorite(index):
     favoritesList[index] = currentListingEngine.eval(currentPathString)
-    favoritesMenu.entryconfig(index, label=currentListingEngine.eval(currentPathString))
+    favoritesMenu.entryconfig(index, label=currentListingEngine.eval(currentPathString) + " " * 50 + f"Alt+{index + 1}")
 
     debugMessage(f"Set {currentListingEngine.eval(currentPathString)} to folder{index + 1}")
 
@@ -321,7 +321,7 @@ if __name__ == "__main__":
     if restoreSession:
         for i in range(9):
             if prev["FAVORITES"][f"folder{i+1}"] != ".":
-                favoritesMenu.entryconfig(i, label=prev["FAVORITES"][f"folder{i+1}"])
+                favoritesMenu.entryconfig(i, label=prev["FAVORITES"][f"folder{i+1}"] + " " * 50 + f"Alt+{i+1}")
                 favoritesList.append(prev["FAVORITES"][f"folder{i+1}"])
             else:
                 favoritesList.append(".")
