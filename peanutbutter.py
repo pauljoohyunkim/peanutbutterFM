@@ -94,20 +94,6 @@ def navigateDirectory(pathString=None):
             imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
         except:
             pass
-#def upDirectory():
-    #global currentPathString
-    #pathString = os.path.dirname(currentPathString)
-    #os.chdir(pathString)
-    #currentPathString = pathString
-    #print(f"[{currentTime()}] Changing directory to: {pathString}")
-
-    ## Refresh content list
-    #fileListBox.delete(0, tk.END)
-    #updateFileList()
-
-    ## Update pathEntry text
-    #pathEntry.delete(0, tk.END)
-    #pathEntry.insert(0, currentPathString)
 
 def property_summary():
     global previewImage
@@ -294,9 +280,7 @@ if __name__ == "__main__":
     imagePreviewCanvas = tk.Canvas(master=imagePreviewFrame, width=imagePreviewWidth, height=imagePreviewHeight, bg=bgColor)
     imagePreviewCanvas.pack()
 
-    #previewImage = imageCanvas("PNG_Test.png", (imagePreviewHeight, imagePreviewWidth))
-    #imageContainer = imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
-    #imagePreviewFrame.pack()
+    
 
     # Menu Bar
     menubar = tk.Menu(mainWin, fg=fgColor, bg=bgColor)
