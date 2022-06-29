@@ -299,7 +299,15 @@ if __name__ == "__main__":
     menubar.add_cascade(label="Hash", menu=hashMenu)
     # Favorites Menu
     favoritesMenu = tk.Menu(menubar, tearoff=0)
-    favoritesMenu.add_command(label="Folder 1", command=lambda: navigateDirectory("/"))
+    #favoritesMenu.add_command(label="Folder 1", command=lambda: navigateDirectory("/"))
+    for i in range(1,10):
+        favoritesMenu.add_command(label=f"Folder {i}                Alt+Control+{i} to set favorite.")
+    
+    # Restore favorites
+    if restoreSession:
+        for i in range(9):
+            if prev["FAVORITES"][f"folder{i+1}"] != ".":
+                favoritesMenu.entryconfig(i, label=prev["FAVORITES"][f"folder{i+1}"])
     menubar.add_cascade(label="Favorites", menu=favoritesMenu)
     mainWin.config(menu=menubar)
 
@@ -327,6 +335,11 @@ if __name__ == "__main__":
     fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END)])
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
+    # Favorites (Adding to Favorite)
+    for i in range(10):
+        def makeLambda(x):
+            return lambda event: favoritesMenu.entryconfig(x-1, label=currentListingEngine.eval(currentPathString))
+        fileListBox.bind(f"<Alt-Control-KeyPress-{i}>", makeLambda(i))
 
 
     mainWin.mainloop()
