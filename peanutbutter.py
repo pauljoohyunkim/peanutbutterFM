@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import configparser
+import textwrap
 import time
 import tkinter as tk
 from tkinter import TclError, messagebox
@@ -20,6 +21,7 @@ currentPathString = os.getcwd()
 currentListingEngine = defaultListingEngine
 currentFileList = []
 favoritesList = []
+customScripts = []
 
 def currentTime():
     now = datetime.now()
@@ -220,6 +222,17 @@ def fileSelectByFirstChar(character):
         except:
             debugMessage("Error in fileSelectByFirstChar function.")
 
+def setCustomScript(index):
+    scriptName = os.path.join(currentPathString, fileListBox.selection_get())
+    customScripts[index] = currentListingEngine.eval(scriptName)
+    customScriptMenu.entryconfig(index, label=currentListingEngine.eval(scriptName) + " " * 50 + f"Ctrl+Numpad {index + 1}")
+    debugMessage(f"Set {currentListingEngine.eval(scriptName)} to script{index+1}")
+
+def runCustomScript(index):
+    subprocess.run([currentListingEngine.inveval(customScripts[index])])
+    updateFileList()
+    debugMessage(f"Running {customScripts[index]}")
+
 if __name__ == "__main__":
 
     # Location of the program
@@ -366,8 +379,23 @@ if __name__ == "__main__":
             else:
                 favoritesList.append(".")
     menubar.add_cascade(label="Favorites", menu=favoritesMenu)
+    # Custom Scripts
+    customScriptMenu = tk.Menu(menubar, tearoff=0)
+    #customScriptMenu.add_command(label="Script 1")
+    for i in range(1,10):
+        def lambdaRunCustomScript(x):
+            return lambda: runCustomScript(customScripts[x-1])
+        customScriptMenu.add_command(label=f"Script {i}" + " " * 50 + f"Alt+Ctrl+Numpad {i} to set custom script.", command = lambdaRunCustomScript(i))
+    menubar.add_cascade(label="Custom Scripts", menu=customScriptMenu)
     mainWin.config(menu=menubar)
 
+    # Restore Custom Scripts
+    if restoreSession:
+        for i in range(9):
+            if prev["CUSTOMSCRIPTS"][f"script{i+1}"] != ".":
+                customScripts.append(prev["CUSTOMSCRIPTS"][f"folder{i+1}"])
+            else:
+                customScripts.append(".")
 
 
     # Bindings
@@ -403,16 +431,24 @@ if __name__ == "__main__":
     fileListBox.bind("<Tab>", lambda event: focusOnPathEntry())
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
-    # Favorites (Adding to Favorite and navigation)
+    # Favorites (Adding to Favorite and navigation) & Custom Scripts
+    symbol_to_num = {}
     for i in range(9):
         def lambdaSetFavorite(x):
             return lambda event: setFavorite(x-1)
         def lambdaNavigateFavorite(x):
             return lambda event: navigateDirectory(favoritesList[x-1])
+        def lambdaSetCustomScript(x):
+            return lambda event: setCustomScript(x-1)
+        def lambdaRunCustomScript(x):
+            return lambda event: runCustomScript(x-1)
         fileListBox.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
         pathEntry.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
         fileListBox.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
         pathEntry.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
+        fileListBox.bind(f"<Alt-Control-KeyPress-KP_{i}>", lambdaSetCustomScript(i))
+        fileListBox.bind(f"<Control-KeyPress-KP_{i}>", lambdaRunCustomScript(i))
+        fileListBox.bind(f"<Control-KeyPress-{i}>", lambdaRunCustomScript(i))
     
 
     mainWin.mainloop()
