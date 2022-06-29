@@ -81,24 +81,25 @@ def navigateDirectory(pathString=None):
     # If a file is already selected, keep the selection.
     # Otherwise, force the selection onto the first item.
     try:
-        fileListBox.selection_get()
+        imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
     except:
         fileListBox.select_clear(0, tk.END)
         fileListBox.selection_set(0)
-def upDirectory():
-    global currentPathString
-    pathString = os.path.dirname(currentPathString)
-    os.chdir(pathString)
-    currentPathString = pathString
-    print(f"[{currentTime()}] Changing directory to: {pathString}")
+        imagePreview(os.path.join(currentPathString, fileListBox.selection_get()))
+#def upDirectory():
+    #global currentPathString
+    #pathString = os.path.dirname(currentPathString)
+    #os.chdir(pathString)
+    #currentPathString = pathString
+    #print(f"[{currentTime()}] Changing directory to: {pathString}")
 
-    # Refresh content list
-    fileListBox.delete(0, tk.END)
-    updateFileList()
+    ## Refresh content list
+    #fileListBox.delete(0, tk.END)
+    #updateFileList()
 
-    # Update pathEntry text
-    pathEntry.delete(0, tk.END)
-    pathEntry.insert(0, currentPathString)
+    ## Update pathEntry text
+    #pathEntry.delete(0, tk.END)
+    #pathEntry.insert(0, currentPathString)
 
 def property_summary():
     global previewImage
@@ -114,14 +115,18 @@ def property_summary():
         fileLastModifiedStringVar.set(f"Last Modified: {modifiedTime}")
         fileCreationStringVar.set(f"Created: {creationTime}")
         osStatStringVar.set(f"Raw File Stat: {stat_result}")
-        if fullFilename.endswith(supported_img_types):
-            imagePreviewFrame.pack()
-            imagePreviewCanvas.delete("all")
-            previewImage = imageCanvas(fullFilename, (imagePreviewHeight, imagePreviewWidth))
-            imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
-        else:
-            imagePreviewFrame.forget()
-            imagePreviewCanvas.delete("all")
+        imagePreview(fullFilename)
+
+def imagePreview(fullFilename):
+    global previewImage
+    if fullFilename.endswith(supported_img_types):
+        imagePreviewFrame.pack()
+        imagePreviewCanvas.delete("all")
+        previewImage = imageCanvas(fullFilename, (imagePreviewHeight, imagePreviewWidth))
+        imagePreviewCanvas.create_image(imagePreviewWidth / 2, imagePreviewHeight / 2,anchor=tk.CENTER,image = previewImage)
+    else:
+        imagePreviewFrame.forget()
+        imagePreviewCanvas.delete("all")
 
 def autoCompletePath():
     currentEntryDir = os.path.dirname(pathEntry.get())
@@ -260,7 +265,7 @@ if __name__ == "__main__":
     # File Menu
     fileMenu = tk.Menu(menubar, tearoff=0)
     fileMenu.add_command(label="New")
-    fileMenu.add_command(label="Open", command=lambda: navigateDirectory(os.path.join(currentPathString, fileListBox.get(fileListBox.curselection()))))
+    fileMenu.add_command(label="Open", command=lambda: navigateDirectory(os.path.join(currentPathString, fileListBox.selection_get())))
     fileMenu.add_command(label="Properties")
     fileMenu.add_separator()
     fileMenu.add_command(label="Recent Files")
