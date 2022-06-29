@@ -230,6 +230,7 @@ def setCustomScript(index):
 
 def runCustomScript(index):
     subprocess.run([currentListingEngine.inveval(customScripts[index])])
+    updateFileList()
     debugMessage(f"Running {customScripts[index]}")
 
 if __name__ == "__main__":
@@ -447,6 +448,7 @@ if __name__ == "__main__":
         pathEntry.bind(f"<Alt-KeyPress-{i}>", lambdaNavigateFavorite(i))
         fileListBox.bind(f"<Alt-Control-KeyPress-KP_{i}>", lambdaSetCustomScript(i))
         fileListBox.bind(f"<Control-KeyPress-KP_{i}>", lambdaRunCustomScript(i))
+        fileListBox.bind(f"<Control-KeyPress-{i}>", lambdaRunCustomScript(i))
     
 
     mainWin.mainloop()
