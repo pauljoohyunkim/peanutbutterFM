@@ -1,4 +1,5 @@
 #!/bin/python3
+import sys
 import os
 import re
 import configparser
@@ -168,28 +169,46 @@ def showHash(hashtype):
     if hashtype == "md5":
         messagebox.showinfo(f"MD5: {fileName}", f"{md5sum(fileName)}")
 
+def onClosing():
+    global restoreSession
+    if restoreSession:
+        prev["NAVIGATION"]["Folder"] = currentPathString
+        with open(os.path.join(scriptLocation, ".session.ini"), "w") as saveSession:
+            prev.write(saveSession)
+    mainWin.destroy()
 
 if __name__ == "__main__":
 
+    # Location of the program
+    scriptLocation = sys.path[0]
+
     # Configuration & Initialization
     config = configparser.ConfigParser()
-    config.read("pb.conf")
+    config.read(os.path.join(scriptLocation, "pb.conf"))
     windowSize = config["DEFAULT"]["WindowSize"]
     pathEntryWidth = int(config["DEFAULT"]["PathEntryWidth"])
     imagePreviewWidth = int(config["DEFAULT"]["ImagePreviewWidth"])
     imagePreviewHeight = int(config["DEFAULT"]["ImagePreviewHeight"])
+    restoreSession = bool(config["DEFAULT"]["RestoreSession"])
     fgColor = config["THEME"]["fg"]
     bgColor = config["THEME"]["bg"]
     folderColor = config["THEME"]["folder"]
     openFileMethod = config["ACTION"]["open"]
+    #Restoring session if restoreSession = True
+    if restoreSession:
+        prev = configparser.ConfigParser()
+        prev.read(os.path.join(scriptLocation, ".session.ini"))
+        currentPathString = prev["NAVIGATION"]["Folder"]
+        os.chdir(currentPathString)
 
     # Main Window
     mainWin = tk.Tk()
     mainWin.title("Peanut Butter FM")
     mainWin.geometry(windowSize)
     mainWin.configure(bg=bgColor)
-    icon = simpleTkImage("peanutbutter.jpg")
+    icon = simpleTkImage(os.path.join(scriptLocation, "peanutbutter.jpg"))
     mainWin.wm_iconphoto(False, icon)
+    mainWin.protocol("WM_DELETE_WINDOW", onClosing)
     
     # Navigator Frame: Folder navigation
     navigatorFrame = tk.Frame(master=mainWin, bg=bgColor)
@@ -200,7 +219,7 @@ if __name__ == "__main__":
 
     locationLabel.grid(row=0,column=0)
     pathEntry.grid(row=0,column=1)
-    pathEntry.insert(0, os.getcwd())
+    pathEntry.insert(0, currentPathString)
     pathEntry.focus()
     goButton.grid(row=0,column=2)
     upFolderButton.grid(row=0, column=3)
@@ -277,7 +296,12 @@ if __name__ == "__main__":
     hashMenu.add_command(label="MD5", command=lambda: showHash("md5"))
     hashMenu.add_command(label="SHA-256", command=lambda: showHash("sha256"))
     menubar.add_cascade(label="Hash", menu=hashMenu)
+    # Favorites Menu
+    favoritesMenu = tk.Menu(menubar, tearoff=0)
+    favoritesMenu.add_command(label="Folder 1", command=lambda: navigateDirectory("/"))
+    menubar.add_cascade(label="Favorites", menu=favoritesMenu)
     mainWin.config(menu=menubar)
+
 
 
     # Bindings
