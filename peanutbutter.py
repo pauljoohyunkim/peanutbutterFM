@@ -21,6 +21,7 @@ currentPathString = os.getcwd()
 currentListingEngine = defaultListingEngine
 currentFileList = []
 favoritesList = []
+customScripts = []
 
 def currentTime():
     now = datetime.now()
@@ -221,6 +222,9 @@ def fileSelectByFirstChar(character):
         except:
             debugMessage("Error in fileSelectByFirstChar function.")
 
+def runCustomScript(index):
+    pass
+
 if __name__ == "__main__":
 
     # Location of the program
@@ -369,10 +373,21 @@ if __name__ == "__main__":
     menubar.add_cascade(label="Favorites", menu=favoritesMenu)
     # Custom Scripts
     customScriptMenu = tk.Menu(menubar, tearoff=0)
-    customScriptMenu.add_command(label="Script 1")
+    #customScriptMenu.add_command(label="Script 1")
+    for i in range(1,10):
+        def lambdaRunCustomScript(x):
+            return lambda: runCustomScript(customScripts[x-1])
+        customScriptMenu.add_command(label=f"Script {i}" + " " * 50 + f"Alt+Shift+{i} to set custom script.", command = lambdaRunCustomScript(i))
     menubar.add_cascade(label="Custom Scripts", menu=customScriptMenu)
     mainWin.config(menu=menubar)
 
+    # Restore Custom Scripts
+    if restoreSession:
+        for i in range(9):
+            if prev["CUSTOMSCRIPTS"][f"script{i+1}"] != ".":
+                customScripts.append(prev["CUSTOMSCRIPTS"][f"folder{i+1}"])
+            else:
+                customScripts.append(".")
 
 
     # Bindings
