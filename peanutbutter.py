@@ -1,4 +1,5 @@
 #!/bin/python3
+import sys
 import os
 import re
 import configparser
@@ -171,9 +172,12 @@ def showHash(hashtype):
 
 if __name__ == "__main__":
 
+    # Location of the program
+    scriptLocation = sys.path[0]
+
     # Configuration & Initialization
     config = configparser.ConfigParser()
-    config.read("pb.conf")
+    config.read(os.path.join(scriptLocation, "pb.conf"))
     windowSize = config["DEFAULT"]["WindowSize"]
     pathEntryWidth = int(config["DEFAULT"]["PathEntryWidth"])
     imagePreviewWidth = int(config["DEFAULT"]["ImagePreviewWidth"])
@@ -188,7 +192,7 @@ if __name__ == "__main__":
     mainWin.title("Peanut Butter FM")
     mainWin.geometry(windowSize)
     mainWin.configure(bg=bgColor)
-    icon = simpleTkImage("peanutbutter.jpg")
+    icon = simpleTkImage(os.path.join(scriptLocation, "peanutbutter.jpg"))
     mainWin.wm_iconphoto(False, icon)
     
     # Navigator Frame: Folder navigation
