@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import configparser
+import time
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
@@ -109,8 +110,8 @@ def property_summary():
         filename = currentListingEngine.inveval(fileListBox.get(cs[0]))
         fullFilename = os.path.join(currentPathString, filename)
         size = os.path.getsize(fullFilename)
-        modifiedTime = os.path.getmtime(fullFilename)
-        creationTime = os.path.getctime(fullFilename)
+        modifiedTime = time.ctime(os.path.getmtime(fullFilename))
+        creationTime = time.ctime(os.path.getctime(fullFilename))
         stat_result = os.stat(fullFilename)
         fileSizeStringVar.set(f"Size: {size} bytes")
         fileLastModifiedStringVar.set(f"Last Modified: {modifiedTime}")
