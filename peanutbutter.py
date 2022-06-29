@@ -18,6 +18,7 @@ import shutil
 
 currentPathString = os.getcwd()
 currentListingEngine = defaultListingEngine
+favoritesList = []
 
 def currentTime():
     now = datetime.now()
@@ -178,6 +179,11 @@ def onClosing():
             prev.write(saveSession)
     mainWin.destroy()
 
+def setFavorite(index):
+    favoritesList[index] = currentListingEngine.eval(currentPathString)
+    favoritesMenu.entryconfig(index, label=currentListingEngine.eval(currentPathString))
+
+
 if __name__ == "__main__":
 
     # Location of the program
@@ -301,13 +307,18 @@ if __name__ == "__main__":
     favoritesMenu = tk.Menu(menubar, tearoff=0)
     #favoritesMenu.add_command(label="Folder 1", command=lambda: navigateDirectory("/"))
     for i in range(1,10):
-        favoritesMenu.add_command(label=f"Folder {i}                Alt+Control+{i} to set favorite.")
+        def lambdaNavigateFavorites(x):
+            return lambda: navigateDirectory(currentListingEngine.inveval(favoritesMenu.entrycget(x-1, "label")))
+        favoritesMenu.add_command(label=f"Folder {i}                Alt+Control+{i} to set favorite.", command = lambdaNavigateFavorites(i))
     
     # Restore favorites
     if restoreSession:
         for i in range(9):
             if prev["FAVORITES"][f"folder{i+1}"] != ".":
                 favoritesMenu.entryconfig(i, label=prev["FAVORITES"][f"folder{i+1}"])
+                favoritesList.append(prev["FAVORITES"][f"folder{i+1}"])
+            else:
+                favoritesList.append(".")
     menubar.add_cascade(label="Favorites", menu=favoritesMenu)
     mainWin.config(menu=menubar)
 
@@ -336,10 +347,10 @@ if __name__ == "__main__":
     # File Actions
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
     # Favorites (Adding to Favorite)
-    for i in range(10):
-        def makeLambda(x):
-            return lambda event: favoritesMenu.entryconfig(x-1, label=currentListingEngine.eval(currentPathString))
-        fileListBox.bind(f"<Alt-Control-KeyPress-{i}>", makeLambda(i))
+    for i in range(9):
+        def lambdaSetFavorite(x):
+            return lambda event: setFavorite(x-1)
+        fileListBox.bind(f"<Alt-Control-KeyPress-{i}>", lambdaSetFavorite(i))
 
 
     mainWin.mainloop()
