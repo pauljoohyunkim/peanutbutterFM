@@ -18,8 +18,9 @@ import subprocess
 import shutil
 import platform
 
-# currentPathString is in real name
+# currentPathString, clipboardPathString are in real name
 currentPathString = os.getcwd()
+clipboardPathString = ""
 currentListingEngine = defaultListingEngine
 # currentFileList is in real name
 # favoritesList and customScripts are in alias
@@ -158,8 +159,9 @@ def imagePreview(fullFilename):
         imagePreviewFrame.forget()
         imagePreviewCanvas.delete("all")
 
+# Need to check if listing engine is correct here.
 def autoCompletePath():
-    currentEntryDir = os.path.dirname(pathEntry.get())
+    currentEntryDir = os.path.dirname(currentListingEngine.inveval(pathEntry.get()))
     folders = [folder for folder in os.listdir(currentEntryDir) if os.path.isdir(os.path.join(currentEntryDir,folder))]
     possibilities = [folder for folder in folders if re.search("^" + os.path.basename(currentListingEngine.inveval(pathEntry.get())), folder)]
     if len(possibilities) == 1:
@@ -168,7 +170,22 @@ def autoCompletePath():
         debugMessage(f"Autocompletion: {os.path.join(currentEntryDir, possibilities[0])}")
     return "break"      # For disabling highlight of pathEntry
 
+def addFileToClipboard():
+    global clipboardPathString
+    global currentPathString
+    try:
+        fileName = currentListingEngine.inveval(fileListBox.selection_get())
+        clipboardPathString = os.path.join(currentPathString, fileName)
+        debugMessage(f"Clipboard: {clipboardPathString}")
+    except:
+        pass
 
+def pasteFile():
+    global clipboardPathString
+    if clipboardPathString:
+        shutil.copy(clipboardPathString, currentPathString)
+        debugMessage(f"Copied file to {os.path.join(currentPathString)}")
+    pass
 
 
 def fileActionDelete():
@@ -457,7 +474,12 @@ if __name__ == "__main__":
     # pathEntry focused when tabbed from fileListBox
     fileListBox.bind("<Tab>", lambda event: focusOnPathEntry())
     # File Actions
+    # Delete file
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
+    # Copy file
+    fileListBox.bind("<Control-KeyPress-c>", lambda event: addFileToClipboard())
+    # Paste file
+    fileListBox.bind("<Control-KeyPress-v>", lambda event: pasteFile())
     # Favorites (Adding to Favorite and navigation) & Custom Scripts
     for i in range(9):
         def lambdaSetFavorite(x):
