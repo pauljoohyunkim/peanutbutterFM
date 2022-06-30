@@ -183,9 +183,21 @@ def addFileToClipboard():
 def pasteFile():
     global clipboardPathString
     if clipboardPathString:
-        shutil.copy(clipboardPathString, currentPathString)
-        debugMessage(f"Copied file to {os.path.join(currentPathString)}")
-    pass
+        if os.path.isfile(clipboardPathString):
+            # Check if the file does not exist
+            if not os.path.isfile(os.path.join(currentPathString, os.path.basename(clipboardPathString))):
+                shutil.copy(clipboardPathString, currentPathString)
+                debugMessage(f"Copied file to {os.path.join(currentPathString)}")
+                clipboardPathString = ""
+            # Otherwise, ask for overwriting.
+            else:
+                confirmation = messagebox.askyesno("Overwrite?", f"Overwrite {os.path.join(currentPathString, os.path.basename(clipboardPathString))}?")
+                if confirmation: 
+                    # Delete first, then copy
+                    os.remove(os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                    shutil.copy(clipboardPathString, currentPathString)
+                    debugMessage(f"Overwritten file to {os.path.join(currentPathString)}")
+                    clipboardPathString = ""
 
 
 def fileActionDelete():
