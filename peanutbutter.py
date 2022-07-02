@@ -290,6 +290,7 @@ def fileSelectByFirstChar(character):
                     fileListBox.selection_clear(0, tk.END)
                     fileListBox.selection_set(index)
                     fileListBox.see(index)
+                    fileListBox.activate(index)
                     break
         except:
             debugMessage("Error in fileSelectByFirstChar function.")
