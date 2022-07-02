@@ -168,6 +168,8 @@ def autoCompletePath():
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, os.path.join(currentEntryDir, possibilities[0],""))
         debugMessage(f"Autocompletion: {os.path.join(currentEntryDir, possibilities[0])}")
+    elif len(possibilities) > 2:
+        debugMessage(f"Autocompletion: {possibilities}")
     return "break"      # For disabling highlight of pathEntry
 
 def addFileToClipboard():
