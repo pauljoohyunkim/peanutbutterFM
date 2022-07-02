@@ -182,22 +182,48 @@ def addFileToClipboard():
 
 def pasteFile():
     global clipboardPathString
+    #if clipboardPathString:
+        #if os.path.isfile(clipboardPathString):
+            ## Check if the file does not exist
+            #if not os.path.isfile(os.path.join(currentPathString, os.path.basename(clipboardPathString))):
+                #shutil.copy(clipboardPathString, currentPathString)
+                #debugMessage(f"Copied file to {os.path.join(currentPathString)}")
+                #clipboardPathString = ""
+            ## Otherwise, ask for overwriting.
+            #else:
+                #confirmation = messagebox.askyesno("Overwrite?", f"Overwrite {os.path.join(currentPathString, os.path.basename(clipboardPathString))}?")
+                #if confirmation: 
+                    ## Delete first, then copy
+                    #os.remove(os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                    #shutil.copy(clipboardPathString, currentPathString)
+                    #debugMessage(f"Overwritten file to {os.path.join(currentPathString)}")
+                    #clipboardPathString = ""
     if clipboardPathString:
-        if os.path.isfile(clipboardPathString):
-            # Check if the file does not exist
-            if not os.path.isfile(os.path.join(currentPathString, os.path.basename(clipboardPathString))):
-                shutil.copy(clipboardPathString, currentPathString)
-                debugMessage(f"Copied file to {os.path.join(currentPathString)}")
+        if os.path.isfile(clipboardPathString) or os.path.isdir(clipboardPathString):
+            # Check if the file or folder does not exist
+            if not (os.path.isfile(os.path.join(currentPathString, os.path.basename(clipboardPathString))) or os.path.isdir(os.path.join(currentPathString, os.path.basename(clipboardPathString)))):
+                if os.path.isfile(clipboardPathString):
+                    shutil.copy(clipboardPathString, currentPathString)
+                    debugMessage(f"Copied file to {os.path.join(currentPathString)}")
+                else:
+                    shutil.copytree(clipboardPathString, os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                    debugMessage(f"Copied folder to {os.path.join(currentPathString, os.path.basename(clipboardPathString))}")
                 clipboardPathString = ""
             # Otherwise, ask for overwriting.
             else:
                 confirmation = messagebox.askyesno("Overwrite?", f"Overwrite {os.path.join(currentPathString, os.path.basename(clipboardPathString))}?")
                 if confirmation: 
                     # Delete first, then copy
-                    os.remove(os.path.join(currentPathString, os.path.basename(clipboardPathString)))
-                    shutil.copy(clipboardPathString, currentPathString)
-                    debugMessage(f"Overwritten file to {os.path.join(currentPathString)}")
+                    if os.path.isfile(os.path.join(currentPathString, os.path.basename(clipboardPathString))):
+                        os.remove(os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                        shutil.copy(clipboardPathString, currentPathString)
+                        debugMessage(f"Overwritten file to {os.path.join(currentPathString)}")
+                    elif os.path.isdir(os.path.join(currentPathString, os.path.basename(clipboardPathString))):
+                        shutil.rmtree(os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                        shutil.copytree(clipboardPathString, os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                        debugMessage(f"Overwritten folder to {os.path.join(currentPathString, os.path.basename(clipboardPathString))}")
                     clipboardPathString = ""
+    updateFileList()
 
 
 def fileActionDelete():
