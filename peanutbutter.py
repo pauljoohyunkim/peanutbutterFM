@@ -1,4 +1,5 @@
 #!/bin/python3
+from distutils import filelist
 import sys
 import os
 import re
@@ -18,8 +19,9 @@ import subprocess
 import shutil
 import platform
 
-# currentPathString is in real name
+# currentPathString, clipboardPathString are in real name
 currentPathString = os.getcwd()
+clipboardPathString = ""
 currentListingEngine = defaultListingEngine
 # currentFileList is in real name
 # favoritesList and customScripts are in alias
@@ -158,17 +160,73 @@ def imagePreview(fullFilename):
         imagePreviewFrame.forget()
         imagePreviewCanvas.delete("all")
 
+# Need to check if listing engine is correct here.
 def autoCompletePath():
-    currentEntryDir = os.path.dirname(pathEntry.get())
+    currentEntryDir = os.path.dirname(currentListingEngine.inveval(pathEntry.get()))
     folders = [folder for folder in os.listdir(currentEntryDir) if os.path.isdir(os.path.join(currentEntryDir,folder))]
     possibilities = [folder for folder in folders if re.search("^" + os.path.basename(currentListingEngine.inveval(pathEntry.get())), folder)]
     if len(possibilities) == 1:
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, os.path.join(currentEntryDir, possibilities[0],""))
         debugMessage(f"Autocompletion: {os.path.join(currentEntryDir, possibilities[0])}")
+    elif len(possibilities) > 2:
+        debugMessage(f"Autocompletion: {possibilities}")
     return "break"      # For disabling highlight of pathEntry
 
+def addFileToClipboard():
+    global clipboardPathString
+    global currentPathString
+    try:
+        fileName = currentListingEngine.inveval(fileListBox.selection_get())
+        clipboardPathString = os.path.join(currentPathString, fileName)
+        debugMessage(f"Clipboard: {clipboardPathString}")
+    except:
+        pass
 
+def pasteFile():
+    global clipboardPathString
+    #if clipboardPathString:
+        #if os.path.isfile(clipboardPathString):
+            ## Check if the file does not exist
+            #if not os.path.isfile(os.path.join(currentPathString, os.path.basename(clipboardPathString))):
+                #shutil.copy(clipboardPathString, currentPathString)
+                #debugMessage(f"Copied file to {os.path.join(currentPathString)}")
+                #clipboardPathString = ""
+            ## Otherwise, ask for overwriting.
+            #else:
+                #confirmation = messagebox.askyesno("Overwrite?", f"Overwrite {os.path.join(currentPathString, os.path.basename(clipboardPathString))}?")
+                #if confirmation: 
+                    ## Delete first, then copy
+                    #os.remove(os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                    #shutil.copy(clipboardPathString, currentPathString)
+                    #debugMessage(f"Overwritten file to {os.path.join(currentPathString)}")
+                    #clipboardPathString = ""
+    if clipboardPathString:
+        if os.path.isfile(clipboardPathString) or os.path.isdir(clipboardPathString):
+            # Check if the file or folder does not exist
+            if not (os.path.isfile(os.path.join(currentPathString, os.path.basename(clipboardPathString))) or os.path.isdir(os.path.join(currentPathString, os.path.basename(clipboardPathString)))):
+                if os.path.isfile(clipboardPathString):
+                    shutil.copy(clipboardPathString, currentPathString)
+                    debugMessage(f"Copied file to {os.path.join(currentPathString)}")
+                else:
+                    shutil.copytree(clipboardPathString, os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                    debugMessage(f"Copied folder to {os.path.join(currentPathString, os.path.basename(clipboardPathString))}")
+                clipboardPathString = ""
+            # Otherwise, ask for overwriting.
+            else:
+                confirmation = messagebox.askyesno("Overwrite?", f"Overwrite {os.path.join(currentPathString, os.path.basename(clipboardPathString))}?")
+                if confirmation: 
+                    # Delete first, then copy
+                    if os.path.isfile(os.path.join(currentPathString, os.path.basename(clipboardPathString))):
+                        os.remove(os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                        shutil.copy(clipboardPathString, currentPathString)
+                        debugMessage(f"Overwritten file to {os.path.join(currentPathString)}")
+                    elif os.path.isdir(os.path.join(currentPathString, os.path.basename(clipboardPathString))):
+                        shutil.rmtree(os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                        shutil.copytree(clipboardPathString, os.path.join(currentPathString, os.path.basename(clipboardPathString)))
+                        debugMessage(f"Overwritten folder to {os.path.join(currentPathString, os.path.basename(clipboardPathString))}")
+                    clipboardPathString = ""
+    updateFileList()
 
 
 def fileActionDelete():
@@ -233,6 +291,7 @@ def fileSelectByFirstChar(character):
                     fileListBox.selection_clear(0, tk.END)
                     fileListBox.selection_set(index)
                     fileListBox.see(index)
+                    fileListBox.activate(index)
                     break
         except:
             debugMessage("Error in fileSelectByFirstChar function.")
@@ -444,9 +503,9 @@ if __name__ == "__main__":
     pathEntry.bind("<Tab>", lambda event: autoCompletePath())
     # Listbox Cursor Movement
     # HOME for the first item
-    fileListBox.bind("<Home>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(0), fileListBox.see(0)])
+    fileListBox.bind("<Home>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(0), fileListBox.see(0), fileListBox.activate(0)])
     # END for the last item
-    fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END), fileListBox.see(tk.END)])
+    fileListBox.bind("<End>", lambda event: [fileListBox.select_clear(0, tk.END), fileListBox.selection_set(tk.END), fileListBox.see(tk.END), fileListBox.activate(tk.END)])
     # fileListBox focused when pressing down arrow key.
     mainWin.bind("<Down>", lambda event: fileListBox.focus())
     # fileListBox select file that starts with certain characters
@@ -457,7 +516,12 @@ if __name__ == "__main__":
     # pathEntry focused when tabbed from fileListBox
     fileListBox.bind("<Tab>", lambda event: focusOnPathEntry())
     # File Actions
+    # Delete file
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
+    # Copy file
+    fileListBox.bind("<Control-KeyPress-c>", lambda event: addFileToClipboard())
+    # Paste file
+    fileListBox.bind("<Control-KeyPress-v>", lambda event: pasteFile())
     # Favorites (Adding to Favorite and navigation) & Custom Scripts
     for i in range(9):
         def lambdaSetFavorite(x):
