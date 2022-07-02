@@ -15,6 +15,13 @@ from filelib.images import imageCanvas, supported_img_types, simpleTkImage
 # By default, this will simply be an identity map, but this can be changed depending on the need.
 # In simple term, essentially, listingEngine(realName) = alias
 from listingenginelib.listingengine import ListingMap, defaultListingEngine
+# Import Plugins
+from pbPlugin.plugin import Plugin, pluginDictionary
+with open("plugin.conf") as file:
+    pluginLib = file.readline().strip()
+    while pluginLib:
+        exec(f"from pbPlugin.{pluginLib} import *")
+        pluginLib = file.readline().strip()
 import subprocess
 import shutil
 import platform

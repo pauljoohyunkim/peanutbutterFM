@@ -1,4 +1,4 @@
-from pbPlugin.plugin import Plugin, pluginDictionary
+from pbPlugin.plugin import Plugin
 from filelib.hasher import sha256sum
 from collections import defaultdict
 #from listingenginelib.listingengine import revdict
@@ -14,6 +14,7 @@ def revdict2(dictionary):
 
 
 def dupe_check(folder):
+    folder = folder[0]
     # All the files (not directories) in folder
     files = [file for file in os.listdir(folder) if os.path.isfile(os.path.join(folder,file))]
     hashdict={}
@@ -25,6 +26,5 @@ def dupe_check(folder):
     # Returns a dictionary of the form clashes[hash] = list of files
     clashes = {key:value for key,value in invhashdict.items() if len(value) >= 2}
     return clashes
-
 
 localDupeCheckPlugin = Plugin("Check duplicate files in current directory", "local_dupe_check.py", dupe_check, comment="Checks for duplicate files in current directory by comparing SHA256 hashes.")
