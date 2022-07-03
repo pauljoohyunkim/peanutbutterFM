@@ -15,11 +15,15 @@ Getting started is as easy as simply cloning the repository and running the prog
 ```
 git clone https://github.com/pauljoohyunkim/peanutbutterFM.git
 
-python peanutbutter.py      # Try python3 instead if you have legacy Python.
+python peanutbutter.py
+# Try python3 instead if you have legacy Python.
+# If you are given an error that you do not have PIL module, try:
+# pip install Pillow
+# or
+# pip3 install Pillow
+
 
 ```
-
-If you are on Windows, currently a minor tweak is needed. This will be fixed at a later time.
 
 ### Configuration
 If you open pb.conf, you will various configurations. Try tweaking them to see how it affects the program at launch.
@@ -60,3 +64,4 @@ pluginObj = Plugin("How you want it to show up in the FM", "template.py", someFu
 ```
 
 If you ever need to access reference to one of the widgets, see the comment near the bottom of peanutbutter.py on how to do so. (You will be adding one line to each peanutbutter.py and global_var.py for each widget you wish to access.)
+
