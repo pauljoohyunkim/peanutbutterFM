@@ -15,7 +15,7 @@ class Plugin():
         pluginDictionary[name] = [self, name, pluginFile, pluginFunction, comment]
     
     # Pass in a list of arguments for the function.
-    def use(self, argList):
-        self.pluginFunction(argList)
+    def use(self):
+        self.pluginFunction()
 
 # Consult the sample plugin local_dupe_check.py that is included.

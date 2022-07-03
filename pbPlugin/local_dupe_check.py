@@ -2,6 +2,7 @@ from pbPlugin.plugin import Plugin
 from filelib.hasher import sha256sum
 from collections import defaultdict
 #from listingenginelib.listingengine import revdict
+import global_var
 import os
 
 # More extensive version of revdict, allowing nonunique mapping
@@ -13,13 +14,12 @@ def revdict2(dictionary):
     return dict(invdict)
 
 
-def dupe_check(folder):
-    folder = folder[0]
+def dupe_check():
     # All the files (not directories) in folder
-    files = [file for file in os.listdir(folder) if os.path.isfile(os.path.join(folder,file))]
+    files = [file for file in os.listdir(global_var.currentPathString) if os.path.isfile(os.path.join(global_var.currentPathString,file))]
     hashdict={}
     for file in files:
-        hashdict[file] = sha256sum(os.path.join(folder,file))
+        hashdict[file] = sha256sum(os.path.join(global_var.currentPathString,file))
     
     invhashdict = revdict2(hashdict)
     # Only consider entries with more than one hashes
