@@ -180,8 +180,9 @@ def newFolder():
             realFolderName = global_var.currentListingEngine.inveval(folderName)
             os.mkdir(realFolderName)
             debugMessage(f"Created {realFolderName} directory.")
-    except:
+    except FileExistsError:
         debugMessage(f"Error while creating {realFolderName} directory.")
+        messagebox.showerror("Create New Directory", "Folder already exists.")
     updateFileList()
 
 
