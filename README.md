@@ -28,6 +28,17 @@ python peanutbutter.py
 ### Configuration
 If you open pb.conf, you will various configurations. Try tweaking them to see how it affects the program at launch.
 
+#### Launch Configuration by File Extension
+It is possible to configure what program to run the file with, or even run a script before a file with certain file extension is to be run. Add your own configuration by opening up pb.conf and adding lines under [ACTION]. Use `fileName` as a macro for your file name (which will be replaced every time you run a corresponding file.)
+
+For example, on my Linux machine using Gnome, I added the following to open txt files with vim.
+```
+[ACTION]
+txt = gnome-terminal -- bash -c "vim `fileName`; exec bash"
+```
+
+When opening file.txt, file manager will run the command: gnome-terminal -- bash -c "vim file.txt; exec bash" instead.
+
 (Currently the repository is still under construction.)
 
 ### Some Shortcuts So Far
