@@ -6,7 +6,7 @@ import configparser
 import textwrap
 import time
 import tkinter as tk
-from tkinter import TclError, messagebox
+from tkinter import TclError, messagebox, simpledialog
 from datetime import datetime
 from filelib.hasher import sha256sum, md5sum
 from filelib.images import imageCanvas, supported_img_types, simpleTkImage
@@ -172,6 +172,18 @@ def autoCompletePath():
     elif len(possibilities) > 2:
         debugMessage(f"Autocompletion: {possibilities}")
     return "break"      # For disabling highlight of pathEntry
+
+def newFolder():
+    try:
+        folderName = simpledialog.askstring("Create New Directory", "Directory Name: ", parent=mainWin)
+        if folderName:
+            realFolderName = global_var.currentListingEngine.inveval(folderName)
+            os.mkdir(realFolderName)
+            debugMessage(f"Created {realFolderName} directory.")
+    except:
+        debugMessage(f"Error while creating {realFolderName} directory.")
+    updateFileList()
+
 
 def addFileToClipboard():
     #global global_var.clipboardPathString
@@ -448,7 +460,7 @@ if __name__ == "__main__":
     menubar = tk.Menu(mainWin, fg=fgColor, bg=bgColor)
     # File Menu
     fileMenu = tk.Menu(menubar, tearoff=0)
-    fileMenu.add_command(label="New")
+    fileMenu.add_command(label="New folder", command=lambda: newFolder())
     fileMenu.add_command(label="Open", command=lambda: navigateDirectory(global_var.currentListingEngine.inveval(os.path.join(global_var.currentPathString, fileListBox.selection_get()))))
     fileMenu.add_command(label="Properties")
     fileMenu.add_separator()
