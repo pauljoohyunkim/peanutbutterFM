@@ -21,7 +21,7 @@ from filelib.images import imageCanvas, supported_img_types, simpleTkImage
 from listingenginelib.listingengine import ListingMap, defaultListingEngine
 # Import Plugins
 from pbPlugin.plugin import Plugin, pluginDictionary
-with open("plugin.conf") as file:
+with open(os.path.join(scriptLocation,"plugin.conf")) as file:
     pluginLib = file.readline().strip()
     while pluginLib:
         exec(f"from pbPlugin.{pluginLib} import *")
