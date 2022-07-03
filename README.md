@@ -26,7 +26,7 @@ python peanutbutter.py
 ```
 
 ### Configuration
-If you open pb.conf, you will various configurations. Try tweaking them to see how it affects the program at launch.
+If you open pb.conf, you will see various configurations. Try tweaking them to see how it affects the program at launch.
 
 #### Launch Configuration by File Extension
 It is possible to configure what program to run the file with, or even run a script before a file with certain file extension is to be run. Add your own configuration by opening up pb.conf and adding lines under [ACTION]. Use `fileName` as a macro for your file name (which will be replaced every time you run a corresponding file.)
