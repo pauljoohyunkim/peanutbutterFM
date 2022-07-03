@@ -45,7 +45,7 @@ def currentTime():
 def debugMessage(string):
     msg = f"[{currentTime()}] {string}"
     print(msg)
-    debugStringVar.set(textwrap.fill(f"Debug: {msg}",80))
+    global_var.debugStringVar.set(textwrap.fill(f"Debug: {msg}",80))
 
 def updateFileList():
     #global global_var.currentPathString
@@ -448,7 +448,7 @@ if __name__ == "__main__":
     debugFrame = tk.Frame(master=mainWin, bg=bgColor)
     debugStringVar = tk.StringVar()
     debugStringVar.set("Debug: ")
-    debugLabel = tk.Label(textvariable=debugStringVar, justify="left", fg=fgColor, bg=bgColor)
+    debugLabel = tk.Label(textvariable=global_var.debugStringVar, justify="left", fg=fgColor, bg=bgColor)
     
     debugLabel.pack(side="left")
     debugFrame.pack(fill=tk.X, expand=False, side="bottom")
@@ -581,6 +581,7 @@ if __name__ == "__main__":
     # Expose widget variables to global_var for easing plugin development
     # (Add this part as needed in a similar fashion, while declaring the variables in global_var.py file.)
     global_var.fileListBox = fileListBox
+    global_var.debugStringVar = debugStringVar
 
 
 

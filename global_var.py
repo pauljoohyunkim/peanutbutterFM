@@ -12,3 +12,4 @@ extensionLaunchDict = {}
 
 # Widget Variables (See WIDGET VARIABLES comment in peanutbutter.py)
 fileListBox = None
+debugStringVar = ""
