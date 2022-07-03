@@ -15,7 +15,13 @@ Getting started is as easy as simply cloning the repository and running the prog
 ```
 git clone https://github.com/pauljoohyunkim/peanutbutterFM.git
 
-python peanutbutter.py      # Try python3 instead if you have legacy Python.
+python peanutbutter.py
+# Try python3 instead if you have legacy Python.
+# If you are given an error that you do not have PIL module, try:
+# pip install Pillow
+# or
+# pip3 install Pillow
+
 
 ```
 
