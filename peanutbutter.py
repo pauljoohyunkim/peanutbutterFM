@@ -116,20 +116,6 @@ def navigateDirectory(pathString=None):
         pathEntry.delete(0, tk.END)
         pathEntry.insert(0, global_var.currentListingEngine.eval(global_var.currentPathString))
     
-    # If a file is already selected, keep the selection.
-    # Otherwise, force the selection onto the first item.
-
-    # If a file does not exist in a folder, do nothing.
-    #try:
-    #    imagePreview(os.path.join(global_var.currentPathString, fileListBox.selection_get()))
-    #except:
-    #    try:
-    #        fileListBox.select_clear(0, tk.END)
-    #        fileListBox.selection_set(0)
-    #        imagePreview(os.path.join(global_var.currentPathString, fileListBox.selection_get()))
-    #    except:
-    #        pass
-
     try:
         fileListBox.selection_get()
     except:
@@ -137,7 +123,6 @@ def navigateDirectory(pathString=None):
             fileListBox.select_clear(0, tk.END)
             fileListBox.selection_set(0)
             property_summary()
-            #imagePreview(os.path.join(global_var.currentPathString, fileListBox.selection_get()))
         except:
             pass
         
@@ -192,23 +177,6 @@ def addFileToClipboard():
         pass
 
 def pasteFile():
-    #global global_var.clipboardPathString
-    #if global_var.clipboardPathString:
-        #if os.path.isfile(global_var.clipboardPathString):
-            ## Check if the file does not exist
-            #if not os.path.isfile(os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))):
-                #shutil.copy(global_var.clipboardPathString, global_var.currentPathString)
-                #debugMessage(f"Copied file to {os.path.join(global_var.currentPathString)}")
-                #global_var.clipboardPathString = ""
-            ## Otherwise, ask for overwriting.
-            #else:
-                #confirmation = messagebox.askyesno("Overwrite?", f"Overwrite {os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))}?")
-                #if confirmation: 
-                    ## Delete first, then copy
-                    #os.remove(os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString)))
-                    #shutil.copy(global_var.clipboardPathString, global_var.currentPathString)
-                    #debugMessage(f"Overwritten file to {os.path.join(global_var.currentPathString)}")
-                    #global_var.clipboardPathString = ""
     if global_var.clipboardPathString:
         if os.path.isfile(global_var.clipboardPathString) or os.path.isdir(global_var.clipboardPathString):
             # Check if the file or folder does not exist
@@ -238,7 +206,6 @@ def pasteFile():
 
 
 def fileActionDelete():
-    #global global_var.currentPathString
     fileName = os.path.join(global_var.currentPathString, global_var.currentListingEngine.inveval(fileListBox.selection_get()))
     deleteQ = messagebox.askyesno("Deletion Warning", f"Delete {fileName}?")
 
@@ -252,7 +219,6 @@ def fileActionDelete():
         updateFileList()
 
 def showHash(hashtype):
-    #global global_var.currentPathString
     try:
         fileName = os.path.join(global_var.currentPathString, global_var.currentListingEngine.inveval(fileListBox.selection_get()))
         
@@ -377,8 +343,6 @@ if __name__ == "__main__":
 
     fileListBox.pack(fill = tk.X)
     fileListScrollbar.pack(side = tk.RIGHT)
-    #fileListBox.grid(row=0,column=0)
-    #contentFrame.place(x=20, y=60)
     contentFrame.pack(fill = tk.X)
 
     # By default, select the first entry, unless it is not possible.
