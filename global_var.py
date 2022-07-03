@@ -7,3 +7,6 @@ currentListingEngine = None
 currentFileList = []
 favoritesList = []
 customScripts = []
+
+# Widget Variables (See WIDGET VARIABLES comment in peanutbutter.py)
+fileListBox = None

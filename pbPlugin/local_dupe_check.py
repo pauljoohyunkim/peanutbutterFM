@@ -2,6 +2,7 @@ from pbPlugin.plugin import Plugin
 from filelib.hasher import sha256sum
 from collections import defaultdict
 from tkinter import messagebox
+import tkinter as tk
 import global_var
 import os
 

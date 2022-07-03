@@ -519,6 +519,12 @@ if __name__ == "__main__":
         fileListBox.bind(f"<Control-KeyPress-KP_{i}>", lambdaRunCustomScript(i))
         fileListBox.bind(f"<Control-KeyPress-{i}>", lambdaRunCustomScript(i))
     
+    # WIDGET VARIABLES
+    # Expose widget variables to global_var for easing plugin development
+    # (Add this part as needed in a similar fashion, while declaring the variables in global_var.py file.)
+    global_var.fileListBox = fileListBox
+
+
 
     mainWin.mainloop()
 

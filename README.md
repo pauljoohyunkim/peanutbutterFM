@@ -37,3 +37,26 @@ If you open pb.conf, you will various configurations. Try tweaking them to see h
 * [Ctrl+C] and [Ctrl+V] for copy and paste respectively.
 * [Alt+Ctrl+{0123456789}] for setting the current folder as a favorite. [Alt+{0123456789}] for navigating to the assigned favorite folder.
 * [Alt+Ctrl+Numpad{0123456789}] for setting the highlighted file as a script that you wish to run by [Ctrl+Numpad{0123456789}].
+
+### Plugin
+You can add custom plugins to Peanut Butter FM. In fact, it is extremely easy! (You can look at pbPlugin/local_dupe_check.py for inspiration.)
+
+Basic template that I might start with for writing a plug is:
+```
+# This is what pbPlugin/template.py might look like.
+from pbPlugin.plugin import Plugin  #This defines the class Plugin
+import global_var                   #It is likely that you would want
+                                    #to use some of the global variables...
+
+# What you want your plugin to do.
+# Note that your function should not take any arguments,
+# as you are trying to make a plugin on a GUI...
+def someFunction():
+    pass
+
+
+# This part should help Peanut Butter recognize a new plugin easily.
+pluginObj = Plugin("How you want it to show up in the FM", "template.py", someFunction, comment="Description of your plugin")
+```
+
+If you ever need to access reference to one of the widgets, see the comment near the bottom of peanutbutter.py on how to do so. (You will be adding one line to each peanutbutter.py and global_var.py for each widget you wish to access.)
