@@ -1,5 +1,4 @@
 #!/bin/python3
-from distutils import filelist
 import sys
 import os
 import re
