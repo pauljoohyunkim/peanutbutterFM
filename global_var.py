@@ -1,3 +1,4 @@
+scriptLocation = ""
 # currentPathString, clipboardPathString are in real name
 currentPathString = ""
 clipboardPathString = ""

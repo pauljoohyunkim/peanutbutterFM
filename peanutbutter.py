@@ -101,7 +101,7 @@ def navigateDirectory(pathString=None):
     # If file
     elif os.path.isfile(pathString):
         try:
-            ext = os.path.splitext(pathString)[-1].split(".")[-1]
+            ext = os.path.splitext(pathString)[-1]
             if ext in global_var.extensionLaunchDict.keys():
                 os.system(global_var.extensionLaunchDict[ext].replace("`fileName`", pathString))
                 debugMessage(f"Opening {pathString} by {global_var.extensionLaunchDict[ext]} {pathString}")
@@ -338,6 +338,7 @@ if __name__ == "__main__":
 
     # Location of the program
     scriptLocation = sys.path[0]
+    global_var.scriptLocation = scriptLocation
 
     # Configuration & Initialization
     config = configparser.ConfigParser()

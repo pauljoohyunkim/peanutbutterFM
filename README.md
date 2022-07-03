@@ -34,7 +34,7 @@ It is possible to configure what program to run the file with, or even run a scr
 For example, on my Linux machine using Gnome, I added the following to open txt files with vim.
 ```
 [ACTION]
-txt = gnome-terminal -- bash -c "vim `fileName`; exec bash"
+.txt = gnome-terminal -- bash -c "vim `fileName`; exec bash"
 ```
 
 When opening file.txt, file manager will run the command: gnome-terminal -- bash -c "vim file.txt; exec bash" instead.
