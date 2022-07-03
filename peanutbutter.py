@@ -36,6 +36,7 @@ global_var.currentListingEngine = defaultListingEngine
 global_var.currentFileList = []
 global_var.favoritesList = []
 global_var.customScripts = []
+global_var.cutInsteadOfCopy = False
 
 def currentTime():
     now = datetime.now()
@@ -173,8 +174,13 @@ def addFileToClipboard():
         fileName = global_var.currentListingEngine.inveval(fileListBox.selection_get())
         global_var.clipboardPathString = os.path.join(global_var.currentPathString, fileName)
         debugMessage(f"Clipboard: {global_var.clipboardPathString}")
+        return 0
     except:
-        pass
+        return 1
+
+def cutAddFileToClipboard():
+    if addFileToClipboard() == 0:
+        global_var.cutInsteadOfCopy = True
 
 def pasteFile():
     if global_var.clipboardPathString:
@@ -183,10 +189,24 @@ def pasteFile():
             if not (os.path.isfile(os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))) or os.path.isdir(os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString)))):
                 if os.path.isfile(global_var.clipboardPathString):
                     shutil.copy(global_var.clipboardPathString, global_var.currentPathString)
-                    debugMessage(f"Copied file to {os.path.join(global_var.currentPathString)}")
+                    # Copy Operation
+                    if global_var.cutInsteadOfCopy == False:
+                        debugMessage(f"Copied file to {os.path.join(global_var.currentPathString)}")
+                    # Cut Operation
+                    else:
+                        os.remove(global_var.clipboardPathString)
+                        global_var.cutInsteadOfCopy = False
+                        debugMessage(f"Cut file to {os.path.join(global_var.currentPathString)}")
                 else:
                     shutil.copytree(global_var.clipboardPathString, os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString)))
-                    debugMessage(f"Copied folder to {os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))}")
+                    # Copy Operation
+                    if global_var.cutInsteadOfCopy == False:
+                        debugMessage(f"Copied folder to {os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))}")
+                    # Cut Operation
+                    else:
+                        shutil.rmtree(global_var.clipboardPathString)
+                        global_var.cutInsteadOfCopy = False
+                        debugMessage(f"Cut folder to {os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))}")
                 global_var.clipboardPathString = ""
             # Otherwise, ask for overwriting.
             else:
@@ -196,11 +216,25 @@ def pasteFile():
                     if os.path.isfile(os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))):
                         os.remove(os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString)))
                         shutil.copy(global_var.clipboardPathString, global_var.currentPathString)
-                        debugMessage(f"Overwritten file to {os.path.join(global_var.currentPathString)}")
+                        # Copy Operation
+                        if global_var.cutInsteadOfCopy == False:
+                            debugMessage(f"Overwritten file to {os.path.join(global_var.currentPathString)}")
+                        # Cut Operation
+                        else:
+                            os.remove(global_var.clipboardPathString)
+                            debugMessage(f"Overwritten file to {os.path.join(global_var.currentPathString)}")
+
                     elif os.path.isdir(os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))):
                         shutil.rmtree(os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString)))
                         shutil.copytree(global_var.clipboardPathString, os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString)))
-                        debugMessage(f"Overwritten folder to {os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))}")
+                        # Copy Operation
+                        if global_var.cutInsteadOfCopy == False:
+                            debugMessage(f"Overwritten folder to {os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))}")
+                        # Cut Operation
+                        else:
+                            shutil.rmtree(global_var.clipboardPathString)
+                            global_var.cutInsteadOfCopy = False
+                            debugMessage(f"Overwritten folder to {os.path.join(global_var.currentPathString, os.path.basename(global_var.clipboardPathString))}")
                     global_var.clipboardPathString = ""
     updateFileList()
 
@@ -499,6 +533,8 @@ if __name__ == "__main__":
     fileListBox.bind("<Delete>", lambda event: fileActionDelete())
     # Copy file
     fileListBox.bind("<Control-KeyPress-c>", lambda event: addFileToClipboard())
+    # Cut file
+    fileListBox.bind("<Control-KeyPress-x>", lambda event: cutAddFileToClipboard())
     # Paste file
     fileListBox.bind("<Control-KeyPress-v>", lambda event: pasteFile())
     # Favorites (Adding to Favorite and navigation) & Custom Scripts
