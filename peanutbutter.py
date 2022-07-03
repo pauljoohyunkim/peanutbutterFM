@@ -1,5 +1,4 @@
 #!/bin/python3
-from distutils import filelist
 import sys
 import os
 import re
@@ -37,6 +36,7 @@ global_var.currentFileList = []
 global_var.favoritesList = []
 global_var.customScripts = []
 global_var.cutInsteadOfCopy = False
+global_var.extensionLaunchDict = {}
 
 def currentTime():
     now = datetime.now()
@@ -101,15 +101,21 @@ def navigateDirectory(pathString=None):
     # If file
     elif os.path.isfile(pathString):
         try:
-            if platform.system().lower() == "windows":
-                os.startfile(pathString)
-            elif platform.system().lower() == "linux":
-                subprocess.run([openFileMethod, pathString])
-            elif platform.system().lower() == "darwin":
-                subprocess.run(["open", pathString])
-            debugMessage(f"Opened {pathString} with default application.")
+            ext = pathString.lower().split(".")[-1]
+            if ext in global_var.extensionLaunchDict.keys():
+                os.system(global_var.extensionLaunchDict[ext].replace("`fileName`", pathString))
+                debugMessage(f"Opening {pathString} by {global_var.extensionLaunchDict[ext]} {pathString}")
+            else:
+
+                if platform.system().lower() == "windows":
+                    os.startfile(pathString)
+                elif platform.system().lower() == "linux":
+                    subprocess.Popen(["xdg-open", pathString], start_new_session=True)
+                elif platform.system().lower() == "darwin":
+                    subprocess.run(["open", pathString])
+                debugMessage(f"Opened {pathString} with default application.")
         except:
-            debugMessage(f"Opening {pathString} with default application failed.")
+            debugMessage(f"Opening {pathString} failed.")
     
     else:
         debugMessage(f"Changing directory to: {pathString} failed.")
@@ -332,7 +338,8 @@ if __name__ == "__main__":
     fgColor = config["THEME"]["fg"]
     bgColor = config["THEME"]["bg"]
     folderColor = config["THEME"]["folder"]
-    openFileMethod = config["ACTION"]["open"]
+    global_var.extensionLaunchDict = config["ACTION"]
+
     #Restoring session if restoreSession = True
     if restoreSession:
         prev = configparser.ConfigParser()
