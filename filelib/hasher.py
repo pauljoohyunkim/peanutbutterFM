@@ -1,6 +1,6 @@
 import hashlib
 
-def sha256sum(filepath, block=2**32):
+def sha256sum(filepath, block=2**20):
     hasher = hashlib.sha256()
     with open(filepath, "rb") as file:
         read_bytes = file.read(block)

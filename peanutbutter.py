@@ -37,6 +37,7 @@ global_var.currentFileList = []
 global_var.favoritesList = []
 global_var.customScripts = []
 global_var.cutInsteadOfCopy = False
+global_var.extensionLaunchDict = {}
 
 def currentTime():
     now = datetime.now()
