@@ -1,5 +1,10 @@
 #!/bin/python3
 import sys
+import global_var
+# Location of the program
+scriptLocation = sys.path[0]
+global_var.scriptLocation = scriptLocation
+
 import os
 import re
 import configparser
@@ -24,7 +29,6 @@ with open("plugin.conf") as file:
 import subprocess
 import shutil
 import platform
-import global_var
 
 # global_var.currentPathString, global_var.clipboardPathString are in real name
 global_var.currentPathString = os.getcwd()
@@ -336,10 +340,6 @@ def runCustomScript(index):
 
 if __name__ == "__main__":
 
-    # Location of the program
-    scriptLocation = sys.path[0]
-    global_var.scriptLocation = scriptLocation
-
     # Configuration & Initialization
     config = configparser.ConfigParser()
     config.read(os.path.join(scriptLocation, "pb.conf"))
@@ -449,7 +449,7 @@ if __name__ == "__main__":
     debugFrame = tk.Frame(master=mainWin, bg=bgColor)
     debugStringVar = tk.StringVar()
     debugStringVar.set("Debug: ")
-    debugLabel = tk.Label(textvariable=global_var.debugStringVar, justify="left", fg=fgColor, bg=bgColor)
+    debugLabel = tk.Label(textvariable=debugStringVar, justify="left", fg=fgColor, bg=bgColor)
     
     debugLabel.pack(side="left")
     debugFrame.pack(fill=tk.X, expand=False, side="bottom")
