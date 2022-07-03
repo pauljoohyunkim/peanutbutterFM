@@ -461,7 +461,7 @@ if __name__ == "__main__":
     menubar = tk.Menu(mainWin, fg=fgColor, bg=bgColor)
     # File Menu
     fileMenu = tk.Menu(menubar, tearoff=0)
-    fileMenu.add_command(label="New folder", command=lambda: newFolder())
+    fileMenu.add_command(label="New folder" + " " * 50 + "Ctrl+N", command=lambda: newFolder())
     fileMenu.add_command(label="Open", command=lambda: navigateDirectory(global_var.currentListingEngine.inveval(os.path.join(global_var.currentPathString, fileListBox.selection_get()))))
     fileMenu.add_command(label="Properties")
     fileMenu.add_separator()
@@ -522,6 +522,8 @@ if __name__ == "__main__":
     # Property Update
     # At every selection, the property summary gets updated.
     fileListBox.bind("<<ListboxSelect>>", lambda event: property_summary())
+    # Create directory
+    fileListBox.bind("<Control-KeyPress-n>", lambda event: newFolder())
     # Navigate directory / Open file
     # Double click and Enter for navigation
     fileListBox.bind("<Double-1>", lambda event: navigateDirectory(global_var.currentListingEngine.inveval(os.path.join(global_var.currentPathString, fileListBox.selection_get()))))

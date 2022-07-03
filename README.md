@@ -48,6 +48,7 @@ When opening file.txt, file manager will run the command: gnome-terminal -- bash
 * [Home] to go to the first entry in the list. [End] to go to the last entry in the list.
 * [Down] key when focused on the path input bar to change your focus to file list.
 * Alphabet key to highlight the file or folder that starts with that letter (case sensitive).
+* [Ctrl+n] for creating directory.
 * [Delete] key to delete a file or a folder.
 * [Ctrl+c], [Ctrl+x] and [Ctrl+v] for copy, cut, and paste respectively.
 * [Alt+Ctrl+{0123456789}] for setting the current folder as a favorite. [Alt+{0123456789}] for navigating to the assigned favorite folder.
