@@ -45,7 +45,7 @@ def currentTime():
 def debugMessage(string):
     msg = f"[{currentTime()}] {string}"
     print(msg)
-    debugStringVar.set(textwrap.fill(f"Debug: {msg}",80))
+    global_var.debugStringVar.set(textwrap.fill(f"Debug: {msg}",80))
 
 def updateFileList():
     #global global_var.currentPathString
@@ -101,7 +101,7 @@ def navigateDirectory(pathString=None):
     # If file
     elif os.path.isfile(pathString):
         try:
-            ext = pathString.lower().split(".")[-1]
+            ext = os.path.splitext(pathString)[-1].split(".")[-1]
             if ext in global_var.extensionLaunchDict.keys():
                 os.system(global_var.extensionLaunchDict[ext].replace("`fileName`", pathString))
                 debugMessage(f"Opening {pathString} by {global_var.extensionLaunchDict[ext]} {pathString}")
@@ -448,7 +448,7 @@ if __name__ == "__main__":
     debugFrame = tk.Frame(master=mainWin, bg=bgColor)
     debugStringVar = tk.StringVar()
     debugStringVar.set("Debug: ")
-    debugLabel = tk.Label(textvariable=debugStringVar, justify="left", fg=fgColor, bg=bgColor)
+    debugLabel = tk.Label(textvariable=global_var.debugStringVar, justify="left", fg=fgColor, bg=bgColor)
     
     debugLabel.pack(side="left")
     debugFrame.pack(fill=tk.X, expand=False, side="bottom")
@@ -463,9 +463,9 @@ if __name__ == "__main__":
     fileMenu = tk.Menu(menubar, tearoff=0)
     fileMenu.add_command(label="New folder" + " " * 50 + "Ctrl+N", command=lambda: newFolder())
     fileMenu.add_command(label="Open", command=lambda: navigateDirectory(global_var.currentListingEngine.inveval(os.path.join(global_var.currentPathString, fileListBox.selection_get()))))
-    fileMenu.add_command(label="Properties")
-    fileMenu.add_separator()
-    fileMenu.add_command(label="Recent Files")
+    #fileMenu.add_command(label="Properties")
+    #fileMenu.add_separator()
+    #fileMenu.add_command(label="Recent Files")
     fileMenu.add_separator()
     fileMenu.add_command(label="Quit", command=mainWin.quit)
     menubar.add_cascade(label="File", menu=fileMenu)
@@ -581,6 +581,7 @@ if __name__ == "__main__":
     # Expose widget variables to global_var for easing plugin development
     # (Add this part as needed in a similar fashion, while declaring the variables in global_var.py file.)
     global_var.fileListBox = fileListBox
+    global_var.debugStringVar = debugStringVar
 
 
 
