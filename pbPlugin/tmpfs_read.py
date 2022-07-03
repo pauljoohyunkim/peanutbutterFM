@@ -28,6 +28,8 @@ def tmpfsCopyRead():
     if ext in config["EXTENSION"].keys():
         subprocess.run([config["EXTENSION"][ext], os.path.join(tmpfs, assignedName) + f"{ext}"])
         debugMessage(f"Running from {tmpfs}")
+        os.remove(os.path.join(tmpfs, assignedName) + f"{ext}")
+        debugMessage(f"{os.path.join(tmpfs, assignedName) + ext} removed.")
     else:
         subprocess.call(["xdg-open", os.path.join(tmpfs, assignedName) + f"{ext}"])
         debugMessage(f"Warning: Because {ext} is not a pre-defined extension, this plugin could not get a blocking signal. Instead, click OK on the info message when you are done with the file.")
