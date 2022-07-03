@@ -43,14 +43,14 @@ If you open pb.conf, you will various configurations. Try tweaking them to see h
 * [Alt+Ctrl+Numpad{0123456789}] for setting the highlighted file as a script that you wish to run by [Ctrl+Numpad{0123456789}].
 
 ### Plugin
-You can add custom plugins to Peanut Butter FM. In fact, it is extremely easy! (You can look at pbPlugin/local_dupe_check.py for inspiration.)
+You can add custom plugins to Peanut Butter FM. In fact, it is extremely easy! (You can look at pbPlugin/local_dupe_check.py for inspiration. Notice that most of the code is just pure Python code without any obscure library or module!)
 
-Basic template that I might start with for writing a plug is:
+Basic template that I might start with for writing a plugin is:
 ```
 # This is what pbPlugin/template.py might look like.
-from pbPlugin.plugin import Plugin  #This defines the class Plugin
-import global_var                   #It is likely that you would want
-                                    #to use some of the global variables...
+from pbPlugin.plugin import Plugin                          #This defines the class Plugin
+import global_var                                           #It is likely that you would want
+                                                            #to use some of the global variables...
 
 # What you want your plugin to do.
 # Note that your function should not take any arguments,
