@@ -1,7 +1,9 @@
-from pbPlugin.plugin import Plugin, pluginDictionary
+from pbPlugin.plugin import Plugin
 from filelib.hasher import sha256sum
 from collections import defaultdict
-#from listingenginelib.listingengine import revdict
+from tkinter import messagebox
+import tkinter as tk
+import global_var
 import os
 
 # More extensive version of revdict, allowing nonunique mapping
@@ -13,18 +15,25 @@ def revdict2(dictionary):
     return dict(invdict)
 
 
-def dupe_check(folder):
+def dupe_check():
     # All the files (not directories) in folder
-    files = [file for file in os.listdir(folder) if os.path.isfile(os.path.join(folder,file))]
+    files = [file for file in os.listdir(global_var.currentPathString) if os.path.isfile(os.path.join(global_var.currentPathString,file))]
     hashdict={}
     for file in files:
-        hashdict[file] = sha256sum(os.path.join(folder,file))
+        hashdict[file] = sha256sum(os.path.join(global_var.currentPathString,file))
     
     invhashdict = revdict2(hashdict)
     # Only consider entries with more than one hashes
     # Returns a dictionary of the form clashes[hash] = list of files
     clashes = {key:value for key,value in invhashdict.items() if len(value) >= 2}
+    if clashes:
+        clashInfo = "Following files are duplicate tuples:\n"
+        for clashFileList in clashes.values():
+            clashInfo += str(clashFileList) + "\n"
+        
+        messagebox.showinfo(f"Duplicate File Checker: {global_var.currentPathString}", f"{clashInfo}")
+    else:
+        messagebox.showinfo(f"Duplicate File Checker: {global_var.currentPathString}", "No exact duplicates found!")
     return clashes
-
 
 localDupeCheckPlugin = Plugin("Check duplicate files in current directory", "local_dupe_check.py", dupe_check, comment="Checks for duplicate files in current directory by comparing SHA256 hashes.")
