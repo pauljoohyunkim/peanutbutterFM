@@ -25,8 +25,6 @@ python peanutbutter.py
 
 ```
 
-If you are on Windows, currently a minor tweak is needed. This will be fixed at a later time.
-
 ### Configuration
 If you open pb.conf, you will various configurations. Try tweaking them to see how it affects the program at launch.
 
