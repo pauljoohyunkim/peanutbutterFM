@@ -58,6 +58,7 @@ def updateFileList():
     fileListBox.delete(0, tk.END)
 
     filelist = [global_var.currentListingEngine.eval(file) for file in os.listdir()]
+    filelist.sort()
 
     global_var.currentFileList = []
     # Directories first
