@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Terminal=false
+MimeType=text/x-peanutbutterFM
+Exec=/home/pbjk/Documents/Lab/peanutbutterFM/peanutbutter.py
+Name=PeanutButterFM
+Icon=/home/pbjk/Documents/Lab/peanutbutterFM/peanutbutter.jpg
+Categories=Development
+Comment=Custom File Manager
+StartupNotify=true
