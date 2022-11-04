@@ -325,6 +325,14 @@ def fileSelectByFirstChar(character):
                     fileListBox.see(index)
                     fileListBox.activate(index)
                     break
+                # Circular Loop
+                for index in range(0, len(global_var.currentFileList)):
+                    if global_var.currentFileList[index] in fileStartsWithCharList:
+                        fileListBox.selection_clear(0, tk.END)
+                        fileListBox.selection_set(index)
+                        fileListBox.see(index)
+                        fileListBox.activate(index)
+                        break
         except:
             debugMessage("Error in fileSelectByFirstChar function.")
 
