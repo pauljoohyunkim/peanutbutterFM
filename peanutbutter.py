@@ -49,7 +49,7 @@ def currentTime():
 def debugMessage(string):
     msg = f"[{currentTime()}] {string}"
     print(msg)
-    global_var.debugStringVar.set(textwrap.fill(f"Debug: {msg}",80))
+    global_var.debugStringVar = (textwrap.fill(f"Debug: {msg}",80))
 
 def updateFileList():
     #global global_var.currentPathString
@@ -368,6 +368,9 @@ if __name__ == "__main__":
         prev = configparser.ConfigParser()
         prev.read(os.path.join(scriptLocation, ".session.ini"))
         global_var.currentPathString = prev["NAVIGATION"]["Folder"]
+        if not os.path.isdir(global_var.currentPathString):
+            global_var.currentPathString = scriptLocation
+            debugMessage("Defaulting to scriptLocation.")
         os.chdir(global_var.currentPathString)
 
     # Main Window
