@@ -349,6 +349,8 @@ def runCustomScript(index):
 
 if __name__ == "__main__":
 
+    argc = len(sys.argv)
+
     # Configuration & Initialization
     config = configparser.ConfigParser()
     config.read(os.path.join(scriptLocation, "pb.conf"))
@@ -368,7 +370,13 @@ if __name__ == "__main__":
         prev = configparser.ConfigParser()
         prev.read(os.path.join(scriptLocation, ".session.ini"))
         global_var.currentPathString = prev["NAVIGATION"]["Folder"]
+        if not os.path.isdir(global_var.currentPathString):
+            global_var.currentPathString = scriptLocation
         os.chdir(global_var.currentPathString)
+
+    if argc > 1 and os.path.isdir(sys.argv[1]):
+            global_var.currentPathString = os.path.realpath(sys.argv[1])
+            os.chdir(global_var.currentPathString)
 
     # Main Window
     mainWin = tk.Tk()
