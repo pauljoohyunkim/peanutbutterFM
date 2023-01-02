@@ -17,7 +17,12 @@ def revdict2(dictionary):
 
 def dupe_check():
     # All the files (not directories) in folder
-    files = [file for file in os.listdir(global_var.currentPathString) if os.path.isfile(os.path.join(global_var.currentPathString,file))]
+    files = []
+    for root, dirs, names in os.walk(global_var.currentPathString):
+        for name in names:
+            if os.path.isfile(os.path.join(root,name)):
+                files.append(os.path.join(root,name))
+    #files = [file for file in os.listdir(global_var.currentPathString) if os.path.isfile(os.path.join(global_var.currentPathString,file))]
     hashdict={}
     for file in files:
         hashdict[file] = sha256sum(os.path.join(global_var.currentPathString,file))
